@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Eventos{% endblock %}
+
+{% block content %}
+    {% load static %}
+    <link href="{% static 'events/css/styles.css' %}" rel="stylesheet">
+    <h1 class="page-title">Eventos Locales</h1>
+
+
+    <div class="search-container">
+        <form method="GET" action="" class="d-flex w-100 gap-3">
+            <div class="search-bar">
+                <input type="text" id="searchInput" name="search" class="search-input" placeholder="Buscar eventos">
+            </div>
+            <button type="submit" class="filter-button">Buscar</button>
+        </form>
+        <a href="{% url 'my_tickets' %}" class="btn btn-primary" style="border: none; background: #DC3545">
+            <i class="bi bi-ticket"></i> Mis Tickets
+        </a>
+    </div>
+
+    <div class="events-grid">
+        <!-- Evento 1 -->
+        {% for event in events %}
+            <div class="event-card">
+                {#                {% if area.images %}#}
+                <img src="{{ event.image.url }}" alt="Campo de fútbol" class="card-img-top">
+                {#                {% else %}#}
+                {#                    <img src="{% static 'events/img/default.jpg' %}" alt="Default" class="card-img-top">#}
+                {#                {% endif %}#}
+                <div class="event-content">
+                    <h2 class="event-title">{{ event.name }}</h2>
+                    <div class="event-category">{{ event.type }}</div>
+                    <div class="event-info">
+                        <i class="bi bi-calendar"></i>
+                        {{ event.date }}
+                    </div>
+                    <div class="event-info">
+                        <i class="bi bi-geo-alt"></i>
+                        {{ event.place }}
+                    </div>
+                    <div class="event-footer">
+                        <span class="price">${{ event.cost }}</span>
+                        <a href="{% url 'event_purchase_modal' event.id %}" class="buy-button" data-bs-toggle="modal"
+                           data-bs-target="#comprarEntradaModal-{{ event.id }}">Comprar
+                            Entrada
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="comprarEntradaModal-{{ event.id }}" tabindex="-1" aria-labelledby="modalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        {% include "events/includes/purchase_modal.html" with event=event form=form %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+
+    </div>
+{% endblock %}

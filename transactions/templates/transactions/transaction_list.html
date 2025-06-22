@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Transacciones{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Transacciones</h2>
+    
+    <!-- Cards de resumen -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Total ingresos</h6>
+                    <h4 class="card-text text-success">${{ total_income|floatformat:2 }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Total gastos</h6>
+                    <h4 class="card-text text-danger">${{ total_expenses|floatformat:2 }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Balance</h6>
+                    <h4 class="card-text {% if balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        ${{ balance|floatformat:2 }}
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Lista de transacciones -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Lista de transacciones</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Destinatario</th>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>
+                                {% if transaction.transaction_type == 'TRANSFER' %}
+                                    <b>Enviado a:</b> {{ transaction.recipient.get_full_name }}
+                                {% else %}
+                                    <b>Recibido de:</b> {{ transaction.wallet.user.get_full_name }}
+                                {% endif %}
+                            </td>
+                            <td>{{ transaction.description }}</td>
+                            <td>{{ transaction.get_transaction_type_display }}</td>
+                            <td class="{% if transaction.transaction_type == 'DEPOSIT' %}text-success{% else %}text-danger{% endif %}">
+                                {% if transaction.transaction_type == 'DEPOSIT' %}+{% else %}-{% endif %}${{ transaction.amount|floatformat:2 }}
+                            </td>
+                            <td>{{ transaction.created_at|date:"Y-m-d" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: none;
+        border-radius: 8px;
+    }
+    .table td, .table th {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+</style>
+{% endblock extra_css %}

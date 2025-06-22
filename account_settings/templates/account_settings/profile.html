@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block page_title %}Perfil{% endblock %}
+
+{% block content %}
+<!-- Alert Messages -->
+<div id="alertContainer" class="position-fixed top-0 start-50 translate-middle-x pt-3" style="z-index: 1050;">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <h4 class="text-dark mb-4">Perfil de Usuario</h4>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <!-- Profile Picture Section -->
+                    <div class="text-center mb-4">
+                        <form id="profilePictureForm" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="position-relative d-inline-block">
+                                <div class="profile-picture-container" style="width: 150px; height: 150px;">
+                                    {% if client.profile_picture %}
+                                        <img src="{{ client.profile_picture.url }}"
+                                             id="profileImage"
+                                             alt="Foto de perfil"
+                                             class="rounded-circle border shadow-sm"
+                                             style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% else %}
+                                        <img src="{% static 'account_settings/img/default-profile.png' %}"
+                                             id="profileImage"
+                                             alt="Foto de perfil por defecto"
+                                             class="rounded-circle border shadow-sm"
+                                             style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% endif %}
+                                    <label for="profilePictureInput" class="btn btn-light btn-sm position-absolute bottom-0 end-0 rounded-circle shadow-sm" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-camera fs-5"></i>
+                                    </label>
+                                    <input type="file"
+                                           id="profilePictureInput"
+                                           name="profile_picture"
+                                           accept="image/*"
+                                           class="d-none"
+                                           onchange="handleProfilePictureChange(this)">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Personal Information Form -->
+                    <form method="POST" id="personalInfoForm" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <!-- Personal Information Section -->
+                            <div class="col-12">
+                                <h5 class="mb-3">Información Personal</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="nombreCompleto" class="form-label">Nombre Completo</label>
+                                        <input type="text"
+                                               class="form-control bg-light"
+                                               id="nombreCompleto"
+                                               value="{{ client.first_name }} {{ client.last_name }}"
+                                               readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="correoElectronico" class="form-label">Correo Electrónico</label>
+                                        <input type="email"
+                                               class="form-control bg-light"
+                                               id="correoElectronico"
+                                               value="{{ client.email }}"
+                                               readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="telefono" class="form-label">Teléfono</label>
+                                        <input type="tel"
+                                               class="form-control"
+                                               id="telefono"
+                                               name="telefono"
+                                               value="{{ client.phone|default:'' }}"
+                                               required>
+                                        <div class="invalid-feedback">
+                                            Por favor ingrese un número de teléfono válido.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="direccion"
+                                               name="direccion"
+                                               value="{{ client.address|default:'' }}"
+                                               required>
+                                        <div class="invalid-feedback">
+                                            Por favor ingrese una dirección válida.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Security Section -->
+                            <div class="col-12">
+                                <h5 class="mb-3">Seguridad</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label for="currentPassword" class="form-label">Contraseña actual</label>
+                                        <input type="password"
+                                               class="form-control"
+                                               id="currentPassword"
+                                               name="current_password">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="newPassword" class="form-label">Nueva contraseña</label>
+                                        <input type="password"
+                                               class="form-control"
+                                               id="newPassword"
+                                               name="new_password">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="confirmPassword" class="form-label">Confirmar nueva contraseña</label>
+                                        <input type="password"
+                                               class="form-control"
+                                               id="confirmPassword"
+                                               name="confirm_password">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    Guardar cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Profile picture preview and upload
+function handleProfilePictureChange(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            document.getElementById('profileImage').src = e.target.result;
+
+            // Automatically submit the form when a new image is selected
+            const formData = new FormData(document.getElementById('profilePictureForm'));
+
+            fetch('{% url "update_profile_picture" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                showAlert(data.success ? 'success' : 'danger', data.message);
+            })
+            .catch(error => {
+                showAlert('danger', 'Error al actualizar la foto de perfil');
+            });
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Form validation
+(function () {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
+
+// Alert handling
+function showAlert(type, message) {
+    const alertHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+    const alertContainer = document.getElementById('alertContainer');
+    alertContainer.innerHTML = alertHTML;
+
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        const alert = alertContainer.querySelector('.alert');
+        if (alert) {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

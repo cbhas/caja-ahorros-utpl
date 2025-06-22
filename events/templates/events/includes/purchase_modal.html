@@ -1,0 +1,64 @@
+<div class="modal-header">
+    <h5 class="modal-title">Buy Ticket</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p class="mb-0">{{ field.label }}: {{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p class="mb-0">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <p class="text-muted">Complete the details to purchase your ticket</p>
+
+    <!-- Event Card -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6 class="card-title">{{ event.name }}</h6>
+            <p class="card-text text-muted mb-1">{{ event.type }}</p>
+            <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-calendar me-2"></i>
+                <span>{{ event.date }}</span>
+            </div>
+            <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-geo-alt me-2"></i>
+                <span>{{ event.place }}</span>
+            </div>
+            <div class="text-primary">
+                <strong>${{ event.cost }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <form method="POST" action="{% url 'wallets:process_ticket_purchase' event.id %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="{{ form.quantity.id_for_label }}" class="form-label">Cantidad</label>
+            <div class="input-group">
+                {{ form.quantity }}
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.wallet.id_for_label }}" class="form-label">Método de Pago</label>
+            {{ form.wallet }}
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                <span class="fw-bold">Tickets disponibles:</span>
+                <span class="fs-5">{{ event.available_tickets }}</span>
+            </div>
+            <button type="submit" class="btn btn-primary">Confirmar Compra</button>
+        </div>
+    </form>
+</div>

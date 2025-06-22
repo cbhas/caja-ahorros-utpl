@@ -1,0 +1,109 @@
+/* Fondo general */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Contenedor principal del login */
+.custom-login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(213, 0, 0, 0.4); /* Difuminado rojo */
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Imagen circular */
+.logo-container {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    box-shadow: 0 4px 15px rgba(213, 0, 0, 0.6); /* Difuminado rojo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.logo-container img {
+    width: 90%; /* Ajusta el tamaño dentro del círculo */
+    height: 90%;
+    object-fit: scale-down;
+    border-radius: 50%;
+}
+
+/* Título principal */
+.custom-login-container h1 {
+    font-size: 24px;
+    color: #d50000;
+    margin-bottom: 10px;
+}
+
+/* Subtítulo */
+.custom-login-container p {
+    font-size: 16px;
+    color: #6e6e6e;
+    margin-bottom: 20px;
+}
+
+/* Botón de "Iniciar Sesión" y "Crear Cuenta" */
+.custom-login-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #d50000;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.custom-login-container button:hover {
+    background-color: #b71c1c;
+}
+
+/* Botón secundario */
+.custom-login-container .secondary-button {
+    background-color: #f5f5f5;
+    color: #d50000;
+    border: 1px solid #d50000;
+}
+
+.custom-login-container .secondary-button:hover {
+    background-color: rgba(213, 0, 0, 0.1);
+}
+
+/* Campos de entrada */
+.custom-login-container input[type="text"],
+.custom-login-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* Texto de "Olvidaste tu contraseña" */
+.custom-login-container a {
+    color: #03a9f4;
+    font-size: 14px;
+    text-decoration: none;
+    display: block;
+    margin-top: 10px;
+}
+
+.custom-login-container a:hover {
+    text-decoration: underline;
+}

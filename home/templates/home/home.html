@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="mb-4">
             <h5 class="text-muted mb-3" style="font-size: 28px">Hola, <b>{{ client.first_name }}</b></h5>
-            <div class="balance-card p-4" style="background-color: #00BFA5; color: white; border-radius: 15px">
+            <div class="balance-card p-4" style="background-color: #004370; color: white; border-radius: 15px">
                 <small class="d-block mb-2" style="font-size: 20px">Tu balance actual</small>
                 <h2 class="mb-2" style="font-size: 44px">${{ current_balance.balance|floatformat:2 }}</h2>
                 <div class="d-flex justify-content-between">
@@ -21,7 +21,7 @@
         <div class="row g-3 mb-4">
             <div class="col">
                 <button class="btn"
-                        style="background-color: #D51F36; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
+                        style="background-color: #FCBF01; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
                         data-bs-toggle="modal" data-bs-target="#modalEnviarDinero">
                     <i class="bi bi-send me-2"></i>
                     Enviar Dinero
@@ -30,7 +30,7 @@
             </div>
             <div class="col">
                 <button class="btn"
-                        style="background-color: #0EBEB2; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
+                        style="background-color: #004370; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
                         data-bs-toggle="modal" data-bs-target="#modalRecibirDinero">
                     <i class="bi bi-download me-2"></i>
                     Recibir Dinero
@@ -45,15 +45,6 @@
                     Ver Movimientos
                 </button>
                 <small class="text-muted d-block mt-1 text-center">Consulta tu historial de transacciones</small>
-            </div>
-            <div class="col">
-                <button class="btn"
-                        style="background-color: #0288D1; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
-                        onclick="window.location.href='{% url 'events_list' %}'">
-                    <i class="bi bi-calendar-event me-2"></i>
-                    Comprar Entradas
-                </button>
-                <small class="text-muted d-block mt-1 text-center">Adquiere entradas para eventos</small>
             </div>
         </div>
 

@@ -1,256 +1,274 @@
 {% load static %}
 
 {% block content %}
-<!-- Agregar Bootstrap -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <!-- Agregar Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
 
-<style>
-    /* Mantengo todos los estilos originales sin cambios */
-    body {
-        background: #f0f0f0;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        animation: fadeIn 1s ease-in-out;
-    }
+    <head>
+        <style>
+            /* Mantengo todos los estilos originales sin cambios */
+            body {
+                background: #f0f0f0;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                animation: fadeIn 1s ease-in-out;
+            }
 
-    .auth-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        width: 100%;
-        max-width: 400px;
-        position: relative;
-        box-shadow: 0 0 80px rgba(0, 255, 239, 0.6);
-        animation: slideUp 0.6s ease-out;
-    }
+            .auth-card {
+                background: white;
+                border-radius: 20px;
+                padding: 2rem;
+                width: 100%;
+                max-width: 400px;
+                position: relative;
+                box-shadow: 0 0 30px #004370;
+                animation: slideUp 0.6s ease-out;
+            }
 
-    .logo-container {
-        width: 150px;
-        height: 150px;
-        margin: 0 auto 1.5rem;
-        background: white;
-        border-radius: 50%;
-        padding: 5px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 3px solid #cdcdcd;
-    }
+            .logo-container {
+                width: 150px;
+                height: 150px;
+                margin: 0 auto 1.5rem;
+                background: white;
+                border-radius: 50%;
+                padding: 5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 3px solid #cdcdcd;
+            }
 
-    .logo-container img {
-        width: 80%;
-        height: 80%;
-        object-fit: contain;
-    }
+            .logo-container img {
+                width: 80%;
+                height: 80%;
+                object-fit: contain;
+            }
 
-    .auth-title {
-        text-align: center;
-        margin-bottom: 0.5rem;
-        font-size: 1.5rem;
-        color: #00b8ad;
-    }
+            .auth-title {
+                text-align: center;
+                margin-bottom: 0.5rem;
+                font-size: 1.5rem;
+                color: #3D3D3D;
+            }
 
-    .auth-tabs {
-        display: flex;
-        margin-bottom: 2rem;
-        background: #f5f5f5;
-        border-radius: 8px;
-        padding: 0.3rem;
-    }
+            .auth-tabs {
+                display: flex;
+                margin-bottom: 2rem;
+                background: #f5f5f5;
+                border-radius: 8px;
+                padding: 0.3rem;
+            }
 
-    .auth-tabs button {
-        flex: 1;
-        padding: 0.8rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        cursor: pointer;
-        background: transparent;
-        color: #666;
-    }
+            .auth-tabs button {
+                flex: 1;
+                padding: 0.8rem;
+                border: none;
+                border-radius: 6px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                background: transparent;
+                color: #666;
+            }
 
-    .auth-tabs button.active {
-        background: #00b8ad;
-        color: white;
-    }
+            .auth-tabs button.active {
+                background: #004370;
+                color: white;
+            }
 
-    .form-group {
-        margin-bottom: 1rem;
-    }
+            .form-group {
+                margin-bottom: 1rem;
+            }
 
-    .form-control {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-sizing: border-box;
-    }
+            .form-control {
+                width: 100%;
+                padding: 0.8rem;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-sizing: border-box;
+            }
 
-    .form-control::placeholder {
-        color: #999;
-    }
+            .form-control::placeholder {
+                color: #999;
+            }
 
-    .btn-submit {
-        width: 100%;
-        padding: 0.8rem;
-        background: #00b8ad;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-    }
+            .btn-submit {
+                width: 100%;
+                padding: 0.8rem;
+                background: #004370;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 1rem;
+                cursor: pointer;
+            }
 
-    .password-tips {
-        font-size: 0.85rem;
-        color: #666;
-        margin-top: 10px;
-        padding-top: 5px;
-        border-top: 1px solid #ddd;
-    }
+            .password-tips {
+                font-size: 0.85rem;
+                color: #666;
+                margin-top: 10px;
+                padding-top: 5px;
+                border-top: 1px solid #ddd;
+            }
 
-    .valid-feedback {
-        color: green;
-        display: none;
-    }
+            .valid-feedback {
+                color: green;
+                display: none;
+            }
 
-    .invalid-feedback {
-        color: red;
-        display: none;
-    }
+            .invalid-feedback {
+                color: red;
+                display: none;
+            }
 
-    @keyframes fadeIn {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-    }
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
 
-    @keyframes slideUp {
-        0% { transform: translateY(30px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-</style>
+            @keyframes slideUp {
+                0% {
+                    transform: translateY(30px);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        </style>
 
-<div class="auth-card">
-    <div class="logo-container">
-        <img src="{% static 'img/logo.webp' %}" alt="PyWallet Logo">
+        <title>Registrarse</title>
+    </head>
+    <div class="auth-card">
+        <div class="logo-container">
+            <img src="{% static 'img/logo.jpeg' %}" alt="UTPL Logo">
+        </div>
+
+        <h1 class="auth-title">Bienvenido a <span style="color: #004370;">Caja de ahorro UTPL</span></h1>
+        <p class="auth-subtitle">Tu solución segura para enviar y recibir pagos</p>
+
+        <div class="auth-tabs">
+            <a href="{% url 'login' %}">
+                <button type="button">Iniciar Sesión</button>
+            </a>
+            <button type="button" class="active">Crear Cuenta</button>
+        </div>
+
+        {% if messages %}
+            <div class="alert alert-danger">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" class="form-control" name="first_name" placeholder="Nombres" required>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="last_name" placeholder="Apellidos" required>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
+            </div>
+            <div class="form-group">
+
+                <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña"
+                       required>
+                {% if form.password.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.password.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="valid-feedback">Contraseña válida.</div>
+                <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres y contener un número.</div>
+            </div>
+
+            <div class="password-tips">
+                <p><strong>Recomendaciones para una contraseña segura:</strong></p>
+                <ul>
+                    <li>Debe tener al menos 6 caracteres.</li>
+                    <li>Debe contener al menos un número.</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <input type="password" class="form-control" id="password_confirm" name="password_confirm"
+                       placeholder="Confirmar contraseña" required>
+                {% if form.password.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.password.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="valid-feedback">Las contraseñas coinciden.</div>
+                <div class="invalid-feedback">Las contraseñas no coinciden.</div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" name="document_type" required>
+                    <option value="">Seleccione tipo de documento</option>
+                    <option value="CEDULA">CEDULA</option>
+                    <option value="RUC">RUC</option>
+                    <option value="PASSPORT">Pasaporte</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="document_number" placeholder="Número de documento"
+                       required>
+            </div>
+            <div class="form-group">
+                <input type="tel" class="form-control" name="phone" placeholder="Teléfono" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Crear Cuenta</button>
+        </form>
     </div>
 
-    <h1 class="auth-title">Bienvenido a <span style="color: #00b8ad;">PyWallet</span></h1>
-    <p class="auth-subtitle">Tu solución segura para enviar y recibir pagos</p>
+    <!-- Agregar jQuery y Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <div class="auth-tabs">
-        <a href="{% url 'login' %}"><button type="button">Iniciar Sesión</button></a>
-        <button type="button" class="active">Crear Cuenta</button>
-    </div>
+    <script>
+        // Función para validar la contraseña
+        const passwordInput = document.getElementById('password');
+        const passwordConfirmInput = document.getElementById('password_confirm');
 
-    {% if messages %}
-    <div class="alert alert-danger">
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-    </div>
-    {% endif %}
+        passwordInput.addEventListener('input', function () {
+            const valid = passwordInput.value.length >= 6 && /\d/.test(passwordInput.value);
+            toggleFeedback(passwordInput, valid);
+        });
 
-    <form method="post" action="{% url 'register' %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <input type="text" class="form-control" name="first_name" placeholder="Nombres" required>
-        </div>
-        <div class="form-group">
-            <input type="text" class="form-control" name="last_name" placeholder="Apellidos" required>
-        </div>
-        <div class="form-group">
-            <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
-        </div>
-        <div class="form-group">
+        passwordConfirmInput.addEventListener('input', function () {
+            const valid = passwordInput.value === passwordConfirmInput.value;
+            toggleFeedback(passwordConfirmInput, valid);
+        });
 
-            <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
-            {% if form.password.errors %}
-                <div class="alert alert-danger">
-                    {% for error in form.password.errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
+        function toggleFeedback(input, valid) {
+            const validFeedback = input.nextElementSibling;
+            const invalidFeedback = validFeedback.nextElementSibling;
 
-            <div class="valid-feedback">Contraseña válida.</div>
-            <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres y contener un número.</div>
-        </div>
-
-        <div class="password-tips">
-            <p><strong>Recomendaciones para una contraseña segura:</strong></p>
-            <ul>
-                <li>Debe tener al menos 6 caracteres.</li>
-                <li>Debe contener al menos un número.</li>
-            </ul>
-        </div>
-
-        <div class="form-group">
-            <input type="password" class="form-control" id="password_confirm" name="password_confirm" placeholder="Confirmar contraseña" required>
-            {% if form.password.errors %}
-                <div class="alert alert-danger">
-                    {% for error in form.password.errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            <div class="valid-feedback">Las contraseñas coinciden.</div>
-            <div class="invalid-feedback">Las contraseñas no coinciden.</div>
-        </div>
-        <div class="form-group">
-            <select class="form-control" name="document_type" required>
-                <option value="">Seleccione tipo de documento</option>
-                <option value="CEDULA">CEDULA</option>
-                <option value="RUC">RUC</option>
-                <option value="PASSPORT">Pasaporte</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <input type="text" class="form-control" name="document_number" placeholder="Número de documento" required>
-        </div>
-        <div class="form-group">
-            <input type="tel" class="form-control" name="phone" placeholder="Teléfono" required>
-        </div>
-
-        <button type="submit" class="btn-submit">Crear Cuenta</button>
-    </form>
-</div>
-
-<!-- Agregar jQuery y Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    // Función para validar la contraseña
-    const passwordInput = document.getElementById('password');
-    const passwordConfirmInput = document.getElementById('password_confirm');
-
-    passwordInput.addEventListener('input', function() {
-        const valid = passwordInput.value.length >= 6 && /\d/.test(passwordInput.value);
-        toggleFeedback(passwordInput, valid);
-    });
-
-    passwordConfirmInput.addEventListener('input', function() {
-        const valid = passwordInput.value === passwordConfirmInput.value;
-        toggleFeedback(passwordConfirmInput, valid);
-    });
-
-    function toggleFeedback(input, valid) {
-        const validFeedback = input.nextElementSibling;
-        const invalidFeedback = validFeedback.nextElementSibling;
-
-        if (valid) {
-            validFeedback.style.display = 'block';
-            invalidFeedback.style.display = 'none';
-        } else {
-            validFeedback.style.display = 'none';
-            invalidFeedback.style.display = 'block';
+            if (valid) {
+                validFeedback.style.display = 'block';
+                invalidFeedback.style.display = 'none';
+            } else {
+                validFeedback.style.display = 'none';
+                invalidFeedback.style.display = 'block';
+            }
         }
-    }
-</script>
+    </script>
 {% endblock %}

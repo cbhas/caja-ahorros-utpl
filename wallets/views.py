@@ -95,7 +95,7 @@ def process_ticket_purchase(request, event_id):
         wallet = form.cleaned_data['wallet']
         total_cost = event.cost * quantity
 
-        recipient = CustomUser.objects.get(email="pywallet@gmail.com")
+        recipient = CustomUser.objects.get(email="caja-ahorros-utpl@gmail.com")
         recipient_wallet = Wallet.objects.get(user=recipient)
 
         if wallet.balance < total_cost:

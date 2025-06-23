@@ -33,7 +33,7 @@ Para ejecutar Py-Wallet en un entorno local, sigue los siguientes pasos:
 ### 1. Clonar el repositorio
 ```sh
  git clone https://github.com/tu_usuario/pywallet.git
- cd pywallet
+ cd caja-ahorros-utpl
 ```
 
 ### 2. Crear y activar un entorno virtual

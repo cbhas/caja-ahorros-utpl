@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'transactions',
     'account_settings',
     'home',
-    'events',
-    'tickets',
+    'news',
+    'credits'
 ]
 
 MIDDLEWARE = [

@@ -1,20 +1,27 @@
 from django.contrib import admin
 from .models import Wallet
 
+from django.contrib import admin
+from .models import Wallet
+
 class WalletAdmin(admin.ModelAdmin):
-    list_display = ('user', 'balance', 'created_at', 'updated_at')  # Campos visibles en la lista
-    list_filter = ('created_at', 'updated_at')  # Filtros en el lateral
-    search_fields = ('user__email',)  # Habilitar búsqueda por email del usuario
-    readonly_fields = ('created_at', 'updated_at')  # Campos que no se pueden editar
+    list_display = ('user', 'get_user_email', 'balance', 'created_at', 'updated_at')
+    search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name')
+    readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
-        (None, {
+        ('Información de la Billetera', {
             'fields': ('user', 'balance')
         }),
         ('Fechas', {
             'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
         }),
     )
 
+    def get_user_email(self, obj):
+        return obj.user.email
+    get_user_email.short_description = 'Correo del Usuario'
+    get_user_email.admin_order_field = 'user__email'
 
     def has_add_permission(self, request):
         # Opcional: Deshabilita la creación de wallets desde el admin si lo prefieres

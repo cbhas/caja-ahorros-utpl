@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.credit-summary-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.credit-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.credit-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.form-section {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+}
+
+.form-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+.amount-slider {
+    background: linear-gradient(to right, #ffc107 0%, #ffc107 0%, #e9ecef 0%, #e9ecef 100%);
+    height: 8px;
+    border-radius: 5px;
+    outline: none;
+    -webkit-appearance: none;
+    transition: background 0.2s ease;
+}
+
+.amount-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffc107;
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.payment-info {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border-left: 4px solid #ffc107;
+}
+
+.payment-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.interest-rate {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #004370 0%, #004370 100%);
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    color: white;
+    min-height: 50px;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, #004370 0%, #004370 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+    color: white;
+}
+
+.input-group-text {
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.info-section {
+    background: #e3f2fd;
+    border-radius: 10px;
+    padding: 1rem;
+    border-left: 4px solid #2196f3;
+    margin-top: 1.5rem;
+}
+
+.custom-checkbox {
+    transform: scale(1.2);
+}
+
+.form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem;
+}
+.btn-primary{
+    border-color: #FCBF01;
+    background-color: #FCBF01;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 8px 20px;
+}
+.btn-primary:hover{
+    background-color: #FCBF01;
+    border-color: #FCBF01;
+    color: #2c3e50;
+}
+</style>
+
+<div class="container-fluid px-4 py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0" style="color: #2c3e50; font-weight: 600;">Solicitar Crédito</h2>
+                <a href="{% url 'credit_list' %}" class="btn btn-primary">
+                    <b>Lista de Créditos</b>
+                </a>
+            </div>
+            
+            <!-- Resumen de Crédito -->
+            <div class="credit-summary-card card mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3" style="color: #2c3e50; font-weight: 600;">Resumen de Crédito</h5>
+                    <p class="credit-label mb-3">Tu línea de crédito actual y disponible</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="credit-label mb-1">Línea de Crédito Total</div>
+                            <div class="credit-amount">${{ wallet.total_credit_line}}</div>
+                        </div>
+                        <div class="col-md-6 text-md-right">
+                            <div class="credit-label mb-1">Crédito Disponible</div>
+                            <div class="credit-amount" style="color: #28a745;">${{ wallet.available_credit }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de Solicitud -->
+            <div class="form-section">
+                <h5 class="form-title">Solicitud de Crédito</h5>
+                <p class="form-subtitle">Completa el formulario para solicitar tu crédito</p>
+
+                <form method="post" id="credit-form">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-4">
+                                <label for="id_amount" class="form-label" style="font-weight: 600; color: #2c3e50;">Monto del préstamo</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="background: #ffc107; border-color: #ffc107; color: #000; border-radius: 8px 0 0 8px; border-width: 2px;">$</span>
+                                    </div>
+                                    {{ form.amount }}
+                                </div>
+                                <input type="range" class="amount-slider w-100" id="amount-slider" min="100" max="20000" step="100" value="{{ form.amount.value|default:'2800' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group mb-4">
+                                <label for="id_term" class="form-label" style="font-weight: 600; color: #2c3e50;">Plazo del préstamo (meses)</label>
+                                {{ form.term }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="id_purpose" class="form-label" style="font-weight: 600; color: #2c3e50;">Propósito del préstamo</label>
+                        {{ form.purpose }}
+                    </div>
+
+                    <div class="form-group form-check mb-4">
+                        <input type="checkbox" class="form-check-input custom-checkbox" id="terms-check" required style="accent-color: #ffc107;">
+                        <label class="form-check-label ml-2" for="terms-check" style="font-weight: 500;">Acepto los términos y condiciones</label>
+                    </div>
+
+                    <div class="payment-info mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span style="font-weight: 500; color: #6c757d;">Pago mensual estimado:</span>
+                            <span id="monthly-payment" class="payment-amount">$248.78</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span style="font-weight: 500; color: #6c757d;">Tasa de interés anual:</span>
+                            <span class="interest-rate">12%</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block submit-btn">Enviar Solicitud de Crédito</button>
+                </form>
+                
+                <div class="info-section">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-info-circle mr-2 mt-1" style="color: #2196f3;"></i>
+                        <div>
+                            <strong style="color: #2196f3;">Información importante</strong>
+                            <p class="mb-0 mt-1" style="font-size: 0.9rem; color: #6c757d;">La aprobación del crédito está sujeta a evaluación. Los términos finales pueden variar según tu perfil crediticio. Para más información, consulta nuestros términos y condiciones.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const amountInput = document.getElementById('id_amount');
+        const amountSlider = document.getElementById('amount-slider');
+        const termSelect = document.getElementById('id_term');
+        const monthlyPaymentSpan = document.getElementById('monthly-payment');
+        const interestRate = 12; // Tasa de interés anual del 12%
+
+        function updateSliderBackground(value) {
+            const min = parseFloat(amountSlider.min);
+            const max = parseFloat(amountSlider.max);
+            const percentage = ((value - min) / (max - min)) * 100;
+            amountSlider.style.background = `linear-gradient(to right, #ffc107 0%, #ffc107 ${percentage}%, #e9ecef ${percentage}%, #e9ecef 100%)`;
+        }
+
+        function calculateMonthlyPayment() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const term = parseInt(termSelect.value) || 12;
+
+            if (amount <= 0) {
+                monthlyPaymentSpan.textContent = '$0.00';
+                updateSliderBackground(0);
+                return;
+            }
+
+            const monthlyInterestRate = (interestRate / 100) / 12;
+            const totalPayments = term;
+            
+            // Fórmula de cuota de préstamo (amortización francesa)
+            const monthlyPayment = amount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, totalPayments)) / (Math.pow(1 + monthlyInterestRate, totalPayments) - 1);
+            
+            monthlyPaymentSpan.textContent = `$${monthlyPayment.toFixed(2)}`;
+            updateSliderBackground(amount);
+        }
+
+        // Sincronizar input y slider
+        amountInput.addEventListener('input', function() {
+            const value = this.value;
+            amountSlider.value = value;
+            calculateMonthlyPayment();
+        });
+
+        amountSlider.addEventListener('input', function() {
+            const value = this.value;
+            amountInput.value = value;
+            calculateMonthlyPayment();
+        });
+
+        // Actualizar cuando cambie el plazo
+        termSelect.addEventListener('change', function() {
+            calculateMonthlyPayment();
+        });
+
+        // Inicializar valores al cargar la página
+        setTimeout(function() {
+            // Asegurar que los valores iniciales estén sincronizados
+            const initialValue = amountInput.value || amountSlider.value || 2800;
+            amountInput.value = initialValue;
+            amountSlider.value = initialValue;
+            calculateMonthlyPayment();
+        }, 100);
+    });
+</script>
+{% endblock %}

@@ -1,33 +1,52 @@
-# admin.py
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
-from .forms import CustomSuperUserCreationForm
 
+@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    add_form = CustomSuperUserCreationForm
+    list_display = (
+        'email', 'username', 'first_name', 'last_name',
+        'document_type', 'document_number', 'phone',
+        'is_active', 'is_verified', 'is_staff', 'date_joined'
+    )
+    list_filter = ('is_active', 'is_staff', 'is_superuser', 'is_verified', 'preferred_currency', 'preferred_language')
+    search_fields = ('email', 'username', 'first_name', 'last_name', 'document_number')
+    readonly_fields = ('created_at', 'updated_at', 'last_login', 'date_joined')
 
-    model = CustomUser
-    list_display = ['email', 'is_staff', 'is_active']
-    list_filter = ['is_staff', 'is_active']
-    search_fields = ['email']
-    ordering = ['email']
-    filter_horizontal = ()
-
-    # Asegúrate de especificar solo los campos que están presentes en tu modelo
-    # No agregues campos adicionales que no estén en el modelo `CustomUser`
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'document_type', 'document_number', 'phone')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        (None, {
+            'fields': ('email', 'password')
+        }),
+        ('Información Personal', {
+            'fields': (
+                'username', 'first_name', 'last_name', 'phone',
+                'document_type', 'document_number', 'address', 'profile_picture'
+            )
+        }),
+        ('Preferencias', {
+            'fields': ('preferred_currency', 'preferred_language', 'notification_preferences')
+        }),
+        ('Estado y Permisos', {
+            'fields': ('is_active', 'is_verified', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
+        }),
+        ('Auditoría', {
+            'fields': ('last_login', 'date_joined', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+        ('Cuenta', {
+            'fields': ('account_balance',),
+        }),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active'),
+            'fields': (
+                'email', 'username', 'password1', 'password2',
+                'first_name', 'last_name', 'phone',
+                'document_type', 'document_number'
+            ),
         }),
     )
 
-admin.site.register(CustomUser, CustomUserAdmin)
+    ordering = ('-date_joined',)

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block page_title %}Inicio{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
     <div class="container-fluid">
@@ -50,28 +51,32 @@
 
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="card-title mb-4">Eventos Locales Destacados</h5>
+                <h5 class="card-title mb-4">Noticias Destacadas</h5>
                 <div class="row g-3">
-                    {% for event in events %}
-                        <div class="col-md-6">
+                    {% for n in news %}
+                        <div class="col-md-3">
                             <div class="card">
                                 <div class="card-body">
-                                    <h6>{{ event.name }}</h6>
-                                    <div class="text-muted small">
-                                        <i class="bi bi-calendar me-2"></i>{{ event.date }}
-                                        <i class="bi bi-pin ms-3 me-2"></i>{{ event.place }}
-                                        <i class="bi bi-circle ms-3 me-2"></i>{{ event.type }}
+                                    <img src="{{ n.image.url }}" alt="New" class="card-img-top" style="max-width: 100%">
+                                    <div class="event-content">
+                                        <h2 class="event-title">{{ n.title }}</h2>
+                                        <div class="event-info">
+                                            <i class="bi bi-calendar"></i>
+                                            {{ n.date }}
+                                        </div>
+                                        <div class="event-info">
+                                            <i class="bi bi-geo-alt"></i>
+                                            {{ n.place }}
+                                        </div>
                                     </div>
-                                    <div class="mt-2">Valor de la entrada: ${{ event.cost }}</div>
-                                    <div class="mt-2">Entradas disponibles: {{ event.available_tickets }}</div>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
                 <div class="text-center mt-3">
-                    <a href="{% url 'events_list' %}"
-                       class="nav-link {% if request.path == '/events/' %}active{% endif %}">Ver todos los eventos</a>
+                    <a href="{% url 'news_list' %}"
+                       class="nav-link {% if request.path == '/news/' %}active{% endif %}">Ver todas las noticias</a>
                 </div>
             </div>
         </div>
@@ -121,7 +126,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
                 <div class="modal-header border-0 bg-gradient"
-                     style="background-color: #D51F36; padding: 2rem 2rem 1rem;">
+                     style="background-color: #004370; padding: 2rem 2rem 1rem;">
                     <h5 class="modal-title text-white" id="modalEnviarDineroLabel" style="font-size: 24px;">
                         <i class="bi bi-send me-2"></i>
                         Enviar Dinero
@@ -154,7 +159,7 @@
                             <p><strong>Descripción:</strong> {{ form.description|safe }}</p>
                         </div>
                         <button type="submit" class="btn w-100 text-white fw-bold py-3"
-                                style="background-color: #D51F36; border-radius: 12px; font-size: 18px;">
+                                style="background-color: #004370; border-radius: 12px; font-size: 18px;">
                             Realizar Transferencia
                         </button>
                     </form>
@@ -169,7 +174,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
                 <div class="modal-header border-0 bg-gradient"
-                     style="background-color: #0EBEB2; padding: 2rem 2rem 1rem;">
+                     style="background-color: #FCBF01; padding: 2rem 2rem 1rem;">
                     <h5 class="modal-title text-white" id="modalRecibirDineroLabel" style="font-size: 24px;">
                         <i class="bi bi-download me-2"></i>
                         Recibir Dinero
@@ -200,13 +205,13 @@
 
                         <div>
                             <label class="text-muted small mb-1">Banco</label>
-                            <p class="fw-bold mb-0" id="banco">PUNTOPYMES Wallet</p>
+                            <p class="fw-bold mb-0" id="banco">UTPL Wallet</p>
                         </div>
                     </div>
 
                     <!-- Botón para copiar toda la información -->
                     <button id="btnCopiar" class="btn w-100 text-white fw-bold py-3"
-                            style="background-color: #0EBEB2; border-radius: 12px; font-size: 18px;">
+                            style="background-color: #FCBF01; border-radius: 12px; font-size: 18px;">
                         <i class="bi bi-clipboard me-2"></i>
                         <span>Copiar información</span>
                     </button>
@@ -326,4 +331,6 @@
             });
         });
     </script>
+
+
 {% endblock %}

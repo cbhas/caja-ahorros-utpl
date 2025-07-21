@@ -5,10 +5,9 @@ from django.db import transaction
 from django.utils import timezone
 import uuid
 
-from tickets.models import Ticket
 from transactions.models import Transaction
 from .models import Wallet
-from events.models import Event
+from news.models import Event
 from .forms import TransferForm, DepositForm, TicketPurchaseForm
 from users.models import CustomUser
 
@@ -81,60 +80,3 @@ def transfer_money(request):
 
     return render(request, 'wallet/transfer.html', {'form': form})
 
-
-@login_required
-def process_ticket_purchase(request, event_id):
-    if request.method != 'POST':
-        return redirect('events_list')
-
-    event = get_object_or_404(Event, pk=event_id)
-    form = TicketPurchaseForm(request.user, request.POST)
-
-    if form.is_valid():
-        quantity = form.cleaned_data['quantity']
-        wallet = form.cleaned_data['wallet']
-        total_cost = event.cost * quantity
-
-        recipient = CustomUser.objects.get(email="caja-ahorros-utpl@gmail.com")
-        recipient_wallet = Wallet.objects.get(user=recipient)
-
-        if wallet.balance < total_cost:
-            messages.error(request, 'No tienes suficientes fondos.')
-        elif event.available_tickets < quantity:
-            messages.error(request, 'No hay suficientes tickets disponibles')
-        else:
-            with transaction.atomic():
-                # Create tickets
-                for _ in range(quantity):
-                    Ticket.objects.create(
-                        event=event,
-                        user=request.user,
-                        cost=event.cost,
-                    )
-
-                # Create transaction
-                Transaction.objects.create(
-                    wallet=wallet,
-                    transaction_type='TICKET_PURCHASE',
-                    amount=total_cost,
-                    description=f"Compra de {quantity} ticket(s) para {event.name}",
-                    recipient=recipient,
-                    reference_number=f"EVT-{uuid.uuid4().hex[:8]}"
-                )
-
-                # Update wallet and event
-                wallet.balance -= total_cost
-                wallet.save()
-                recipient_wallet.balance += total_cost
-                recipient_wallet.save()
-                event.available_tickets -= quantity
-                event.save()
-
-                messages.success(request, 'Compra Completada')
-                return redirect('events_list')
-
-    # If there are errors, return to modal with errors
-    return render(request, "events/events.html", {
-        'event': event,
-        'form': form
-    })

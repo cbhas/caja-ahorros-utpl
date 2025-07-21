@@ -25,7 +25,6 @@ class CustomUser(AbstractUser):
     is_verified = models.BooleanField(default=False)
     preferred_currency = models.CharField(max_length=3, default='USD')
     preferred_language = models.CharField(max_length=2, default='es')
-    notification_preferences = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

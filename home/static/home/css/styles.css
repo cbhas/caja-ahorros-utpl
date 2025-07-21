@@ -1,0 +1,170 @@
+.dashboard-container {
+    display: flex;
+    gap: 24px;
+}
+
+.left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.left-column {
+    flex: 2;
+}
+
+.right-column {
+    flex: 1;
+}
+
+.balance-card, .summary-card, .transfer-card, .transactions-card, .news-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.balance-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.balance-amount {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.summary-card {
+    display: flex;
+    gap: 24px;
+}
+
+.summary-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.summary-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.summary-icon.income {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.summary-icon.expense {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.summary-details p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.summary-details h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.transfer-card h2, .transactions-card h2, .news-card h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.transactions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-icon {
+    font-size: 24px;
+}
+
+.transaction-details p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.transaction-details small {
+    color: #6b7280;
+}
+
+.transaction-amount {
+    margin-left: auto;
+    font-weight: 600;
+}
+
+.news-card .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.news-card .event-card {
+    background: #f9fafb;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.news-card .event-card:hover {
+    transform: translateY(-5px);
+}
+
+.news-card .event-card img {
+    height: 150px;
+    object-fit: cover;
+}
+
+.news-card .event-content {
+    padding: 16px;
+}
+
+.news-card .event-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.news-card .event-info {
+    font-size: 14px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}

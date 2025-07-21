@@ -192,7 +192,7 @@
                 </li>
                 <!-- Solicitar Crédito -->
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link">
+                    <a href="{% url 'credit_request' %}" class="nav-link {% if 'credits' in request.path %}active{% endif %}">
                         <i class="bi bi-credit-card me-3"></i>
                         Solicitar Crédito
                     </a>
@@ -206,10 +206,10 @@
                 </li>
                 <!-- Eventos Locales -->
                 <li class="nav-item mb-2">
-                    <a href="{% url 'events_list' %}"
-                       class="nav-link {% if 'events' in request.path %}active{% endif %}">
-                        <i class="bi bi-geo-alt me-3"></i>
-                        Eventos Locales
+                    <a href="{% url 'news_list' %}"
+                       class="nav-link {% if 'news' in request.path %}active{% endif %}">
+                        <i class="bi bi-newspaper me-3"></i>
+                        Noticias
                     </a>
                 </li>
                 <!-- Perfil -->

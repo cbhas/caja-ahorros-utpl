@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from events.models import Event
+from news.models import New
 from transactions.models import Transaction
 from wallets.models import Wallet
 from django.db.models import Sum
@@ -17,7 +17,7 @@ from django.http import JsonResponse
 @login_required
 def dashboard_view(request):
 
-    events = Event.objects.all().order_by('-date')[:2]
+    news = New.objects.all().order_by('-date')[:2]
 
     user = request.user
     current_balance = Wallet.objects.filter(user=user).first()
@@ -92,7 +92,7 @@ def dashboard_view(request):
         'daily_expenses': daily_expenses,
         'form': form,
         'recent_transactions': recent_transactions,
-        'events': events,
+        'news': news,
     }
 
     return render(request, 'home/home.html', context)

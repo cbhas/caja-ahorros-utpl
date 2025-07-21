@@ -27,6 +27,7 @@ urlpatterns = [
     path('account_settings/', include('account_settings.urls')),
     path('transactions/', include('transactions.urls')),
     path('update-profile-picture/', views.update_profile_picture, name='update_profile_picture'),
-    path('events/', include('events.urls')),
+    path('news/', include('news.urls')),
     path('wallets/', include('wallets.urls', namespace='wallets')),
+    path('credits/', include('credits.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

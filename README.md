@@ -1,7 +1,7 @@
 # Py-Wallet
 
 ## Descripción
-Py-Wallet es una billetera digital diseñada para clientes del sistema **PuntoPymes** que no tienen acceso a servicios financieros tradicionales. Su propósito es proporcionar una herramienta segura y accesible para realizar transacciones financieras básicas, gestionar cuentas de ahorro y visualizar reportes financieros.
+Py-Wallet es una billetera digital diseñada para docentes de la UTPL. Su propósito es proporcionar una herramienta segura y accesible para realizar transacciones financieras básicas, gestionar cuentas de ahorro y visualizar reportes financieros.
 
 Este proyecto fue desarrollado utilizando **Django** como framework backend, siguiendo el patrón de diseño **Model-View-Template (MVT)**. La interfaz de usuario fue construida con **Bootstrap**, garantizando una experiencia intuitiva y responsiva.
 

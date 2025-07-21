@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Eventos{% endblock %}
+
+{% block content %}
+    {% load static %}
+    <link href="{% static 'news/css/styles.css' %}" rel="stylesheet">
+    <h1 class="page-title">Noticias</h1>
+
+
+    <div class="search-container">
+        <form method="GET" action="" class="d-flex w-100 gap-3">
+            <div class="search-bar">
+                <input type="text" id="searchInput" name="search" class="search-input" placeholder="Buscar noticias">
+            </div>
+            <button type="submit" class="filter-button">Buscar</button>
+        </form>
+    </div>
+
+    <div class="events-grid">
+        <!-- Evento 1 -->
+        {% for n in news %}
+
+                        <div class="event-card">
+                            {#                {% if area.images %}#}
+                            <img src="{{ n.image.url }}" alt="New" class="card-img-top" style="max-width: 100%">
+                            {#                {% else %}#}
+                            {#                    <img src="{% static 'news/img/default.jpg' %}" alt="Default" class="card-img-top">#}
+                            {#                {% endif %}#}
+                            <div class="event-content">
+                                <h2 class="event-title">{{ n.title }}</h2>
+                                <div class="event-info">
+                                    <i class="bi bi-calendar"></i>
+                                    {{ n.date }}
+                                </div>
+                                <div class="event-info">
+                                    <i class="bi bi-geo-alt"></i>
+                                    {{ n.place }}
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+    </div>
+{% endblock %}

@@ -5,6 +5,7 @@ from .models import Credit
 from wallets.models import Wallet
 import math
 from decimal import Decimal
+from django.db.models import Sum, Count, Avg
 
 @login_required
 def credit_request(request):
@@ -63,3 +64,54 @@ def credit_detail(request, credit_id):
         'credit': credit
     }
     return render(request, 'credits/credit_detail.html', context)
+
+
+@login_required
+def admin_credit_list(request):
+    # Stats Cards
+    approved_credits = Credit.objects.filter(status='approved')
+    approved_count = approved_credits.count()
+    approved_sum = approved_credits.aggregate(Sum('amount'))['amount__sum'] or 0
+
+    # "En Revision" in the design seems to map to "pending" in the model
+    pending_credits = Credit.objects.filter(status='pending')
+    pending_count = pending_credits.count()
+    pending_sum = pending_credits.aggregate(Sum('amount'))['amount__sum'] or 0
+
+    # "Vencidos" in the design seems to map to "defaulted" in the model
+    defaulted_credits = Credit.objects.filter(status='defaulted')
+    defaulted_count = defaulted_credits.count()
+    defaulted_sum = defaulted_credits.aggregate(Sum('amount'))['amount__sum'] or 0
+
+    average_interest_rate = Credit.objects.aggregate(Avg('interest_rate'))['interest_rate__avg'] or 0
+
+    # Solicitudes Pendientes
+    # The design shows "Pendiente" and "En Revisión". We'll use our 'pending' status for this list.
+    pending_applications = Credit.objects.filter(status='pending').order_by('-created_at')
+
+    # Tipos de Crédito
+    total_credits = Credit.objects.exclude(purpose__isnull=True).exclude(purpose__exact='').count()
+    credit_type_distribution = Credit.objects.exclude(purpose__isnull=True).exclude(purpose__exact='').values('purpose').annotate(count=Count('purpose')).order_by('-count')
+
+    credit_types_data = []
+    if total_credits > 0:
+        for item in credit_type_distribution:
+            percentage = (item['count'] * 100) / total_credits
+            credit_types_data.append({
+                'purpose': item['purpose'],
+                'count': item['count'],
+                'percentage': round(percentage, 2)
+            })
+
+    context = {
+        'approved_count': approved_count,
+        'approved_sum': approved_sum,
+        'pending_count': pending_count,
+        'pending_sum': pending_sum,
+        'defaulted_count': defaulted_count,
+        'defaulted_sum': defaulted_sum,
+        'average_interest_rate': average_interest_rate,
+        'pending_applications': pending_applications,
+        'credit_types_data': credit_types_data,
+    }
+    return render(request, 'credits/manage_credits.html', context)

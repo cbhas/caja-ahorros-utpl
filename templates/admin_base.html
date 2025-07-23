@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="{% url 'admin_home' %}">
+            <i class="fas fa-university me-2"></i>
+            CADUTPL Admin
+        </a>
+        <div class="navbar-text text-muted">
+            Caja de Ahorro Docente UTPL
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="btn export-btn me-3">
+                <i class="fas fa-download me-2"></i>
+                Exportar
+            </button>
+            <div class="dropdown">
+                <button class="btn btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle fs-4"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" >Mi Perfil</a></li>
+                    <li><a class="dropdown-item" >Configuración</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" >Cerrar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Pestañas de Navegación -->
+<div class="container-fluid px-4 py-3">
+    <ul class="nav nav-tabs nav-tabs-custom">
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+               href="{% url 'admin_home' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'socios' %}active{% endif %}"
+              >Socios</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'transacciones' %}active{% endif %}"
+               ">Transacciones</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'ahorros' %}active{% endif %}"
+               >Ahorros</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'creditos' %}active{% endif %}"
+               href="{% url 'admin_credits' %}">Créditos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'reportes' %}active{% endif %}"
+              >Reportes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'config' %}active{% endif %}"
+               >Config</a>
+        </li>
+    </ul>
+</div>

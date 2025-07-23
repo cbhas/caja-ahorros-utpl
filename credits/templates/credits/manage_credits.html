@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADUTPL Admin - Gestión de Créditos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e5a8a;
+            --primary-light: #2980b9;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar-custom {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color) !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-tabs-custom {
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .nav-tabs-custom .nav-link {
+            color: #6c757d;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .nav-tabs-custom .nav-link.active {
+            color: white;
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+        .nav-tabs-custom .nav-link:hover:not(.active) {
+            color: var(--primary-color);
+            border: none;
+        }
+
+        .stats-card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-card.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .stats-card.warning {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .stats-card.danger {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .stats-card.info {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 6px;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+
+        .btn-outline-primary-custom {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 6px;
+        }
+
+        .btn-outline-primary-custom:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .status-revision {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        .export-btn {
+            border: 1px solid var(--border-color);
+            background: white;
+            color: #6c757d;
+            border-radius: 6px;
+        }
+
+        .export-btn:hover {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        .table-custom {
+            font-size: 0.9rem;
+        }
+
+        .table-custom th {
+            border-top: none;
+            color: #6c757d;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+        {% include 'admin_base.html' %}
+        <!-- Encabezado de Sección -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title mb-0">Gestión de Créditos</h2>
+            <button class="btn btn-primary-custom">
+                <i class="fas fa-plus me-2"></i>
+                Nueva Solicitud
+            </button>
+        </div>
+
+        <!-- Tarjetas de Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card success">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="stats-number text-success">
+                                    <i class="fas fa-check-circle me-2"></i>42
+                                </div>
+                                <p class="stats-label">Aprobados</p>
+                                <small class="text-muted">$180,000</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card warning">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="stats-number text-warning">
+                                    <i class="fas fa-clock me-2"></i>8
+                                </div>
+                                <p class="stats-label">En Revisión</p>
+                                <small class="text-muted">$95,000</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card danger">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="stats-number text-danger">
+                                    <i class="fas fa-times-circle me-2"></i>3
+                                </div>
+                                <p class="stats-label">Vencidos</p>
+                                <small class="text-muted">$25,000</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card info">
+                    <div class="card-body">
+                        <div class="flex-grow-1">
+                            <div class="stats-number text-primary">12.5%</div>
+                            <p class="stats-label">Tasa Promedio</p>
+                            <small class="text-muted">Anual</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="row">
+            <!-- Solicitudes Pendientes -->
+            <div class="col-lg-8 mb-4">
+                <div class="card section-card">
+                    <div class="card-body">
+                        <h5 class="section-title">Solicitudes Pendientes</h5>
+                        <p class="section-subtitle">Créditos que requieren revisión</p>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-custom">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3">
+                                                    <div class="bg-primary rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="fas fa-user text-white"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1">Dr. Luis Herrera</h6>
+                                                    <small class="text-muted">1108901234</small>
+                                                    <div class="mt-2">
+                                                        <small><strong>Tipo:</strong> Formación Docente</small><br>
+                                                        <small><strong>Monto:</strong> $3000</small><br>
+                                                        <small><strong>Descripción:</strong> Maestría en Educación Superior</small><br>
+                                                        <small><strong>Fecha:</strong> 2024-01-10</small>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <button class="btn btn-outline-primary-custom btn-sm">
+                                                        <i class="fas fa-eye me-1"></i>
+                                                        Revisar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3">
+                                                    <div class="bg-warning rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="fas fa-user text-white"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1">Dra. Carmen Silva</h6>
+                                                    <small class="text-muted">1109012345</small>
+                                                    <div class="mt-2">
+                                                        <small><strong>Tipo:</strong> Emergencia</small><br>
+                                                        <small><strong>Monto:</strong> $1500</small><br>
+                                                        <small><strong>Descripción:</strong> Gastos médicos urgentes</small><br>
+                                                        <small><strong>Fecha:</strong> 2024-01-12</small>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <span class="status-badge status-revision me-2">En Revisión</span>
+                                                    <button class="btn btn-outline-primary-custom btn-sm">
+                                                        <i class="fas fa-eye me-1"></i>
+                                                        Revisar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tipos de Crédito -->
+            <div class="col-lg-4 mb-4">
+                <div class="card section-card">
+                    <div class="card-body">
+                        <h5 class="section-title">Tipos de Crédito</h5>
+                        <p class="section-subtitle">Distribución por categoría</p>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Formación Docente</span>
+                                <span class="fw-bold">40%</span>
+                            </div>
+                            <div class="progress progress-bar-custom">
+                                <div class="progress-bar bg-primary" style="width: 40%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Consumo</span>
+                                <span class="fw-bold">35%</span>
+                            </div>
+                            <div class="progress progress-bar-custom">
+                                <div class="progress-bar bg-info" style="width: 35%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Emergencia</span>
+                                <span class="fw-bold">15%</span>
+                            </div>
+                            <div class="progress progress-bar-custom">
+                                <div class="progress-bar bg-warning" style="width: 15%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Emprendimiento</span>
+                                <span class="fw-bold">10%</span>
+                            </div>
+                            <div class="progress progress-bar-custom">
+                                <div class="progress-bar bg-success" style="width: 10%"></div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary-custom w-100">
+                            Generar Reporte Detallado
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificación de Reporte -->
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-light border d-flex align-items-center" role="alert">
+                    <i class="fas fa-info-circle text-primary me-3"></i>
+                    <div>
+                        <strong>Reporte generado</strong><br>
+                        El reporte de Ahorro General ha sido generado exitosamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Activar pestañas
+        document.querySelectorAll('.nav-tabs-custom .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remover clase active de todos los enlaces
+                document.querySelectorAll('.nav-tabs-custom .nav-link').forEach(l => {
+                    l.classList.remove('active');
+                });
+                
+                // Agregar clase active al enlace clickeado
+                this.classList.add('active');
+            });
+        });
+
+        // Funcionalidad para los botones de revisar
+        document.querySelectorAll('.btn-outline-primary-custom').forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Abriendo solicitud para revisión...');
+            });
+        });
+
+        // Nueva solicitud
+        document.querySelector('.btn-primary-custom').addEventListener('click', function() {
+            alert('Abriendo formulario de nueva solicitud...');
+        });
+
+        // Generar reporte
+        document.querySelector('.btn-primary-custom.w-100').addEventListener('click', function() {
+            alert('Generando reporte detallado...');
+        });
+    </script>
+</body>
+</html>

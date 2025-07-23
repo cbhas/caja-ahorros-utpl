@@ -30,7 +30,10 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('home')
+            if request.user.is_authenticated and not request.user.is_staff:
+                return redirect('home')
+            if request.user.is_authenticated and request.user.is_staff:
+                return redirect('admin_home')
         else:
             messages.error(request, 'Credenciales inválidas')
 

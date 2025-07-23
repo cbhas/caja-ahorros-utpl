@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'account_settings',
     'home',
     'news',
-    'credits'
+    'credits',
+    'savings_goals',
 ]
 
 MIDDLEWARE = [

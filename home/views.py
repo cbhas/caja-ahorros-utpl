@@ -118,3 +118,6 @@ def validate_account(request):
         except CustomUser.DoesNotExist:
             return JsonResponse({'valid': False, 'message': 'El destinatario no existe.'})
     return JsonResponse({'valid': False, 'message': 'Método no permitido.'})
+
+def admin_dashboard_view(request):
+    return render(request, "home/admin_home.html")

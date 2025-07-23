@@ -19,7 +19,7 @@ class CustomUser(AbstractUser):
         max_length=20,
         choices=[("CEDULA", "CEDULA"), ("RUC", "RUC"), ("PASSPORT", "Pasaporte")],
     )
-    document_number = models.CharField(max_length=20, unique=True)
+    document_number = models.CharField(max_length=20)
     reference_number = models.CharField(max_length=100, unique=True, default=uuid.uuid4)
 
     address = models.CharField(max_length=255, blank=True)

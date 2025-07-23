@@ -17,8 +17,11 @@ def login_required_custom(function):
     return wrap
 
 def login_view(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_staff:
         return redirect('home')
+
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('admin_home')
 
     if request.method == 'POST':
         email = request.POST.get('email')

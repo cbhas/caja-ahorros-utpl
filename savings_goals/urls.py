@@ -9,5 +9,4 @@ urlpatterns = [
     path("<int:goal_id>/", views.goal_detail, name="detail"),
     path("<int:goal_id>/agregar-fondos/", views.add_funds, name="add_funds"),
     path("<int:goal_id>/retirar-fondos/", views.withdraw_funds, name="withdraw_funds"),
-    path("<int:goal_id>/eliminar/", views.delete_goal, name="delete"),
 ]

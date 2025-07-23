@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
             )
         }),
         ('Preferencias', {
-            'fields': ('preferred_currency', 'preferred_language', 'notification_preferences')
+            'fields': ('preferred_currency', 'preferred_language')
         }),
         ('Estado y Permisos', {
             'fields': ('is_active', 'is_verified', 'is_staff', 'is_superuser', 'groups', 'user_permissions')

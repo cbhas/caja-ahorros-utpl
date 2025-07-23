@@ -1,7 +1,7 @@
 from django import forms
 from django.core.validators import MinValueValidator
 from decimal import Decimal
-from .models import SavingsGoal, SavingsTransaction
+from .models import SavingsGoal
 
 
 class SavingsGoalForm(forms.ModelForm):
@@ -54,13 +54,6 @@ class AddFundsForm(forms.Form):
         ),
         label="Cantidad a agregar",
     )
-    description = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Descripción (opcional)"}
-        ),
-        label="Descripción",
-    )
 
     def __init__(self, *args, **kwargs):
         self.user_wallet = kwargs.pop("user_wallet", None)
@@ -87,13 +80,6 @@ class WithdrawFundsForm(forms.Form):
             }
         ),
         label="Cantidad a retirar",
-    )
-    description = forms.CharField(
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Descripción (opcional)"}
-        ),
-        label="Descripción",
     )
 
     def __init__(self, *args, **kwargs):

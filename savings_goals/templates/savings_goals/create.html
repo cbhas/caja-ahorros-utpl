@@ -1,349 +1,548 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Objetivo de Ahorro</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .sidebar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            width: 250px;
-            position: fixed;
-            left: 0;
-            top: 0;
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Ahorro Objetivo{% endblock %}
+
+{% block content %}
+<style>
+    /* --- Estilos personalizados para Savings Goals --- */
+    .sg-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .sg-page-title {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.75rem;
+        margin-bottom: 2rem;
+    }
+
+    .sg-summary-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .sg-summary-title {
+        color: #2c3e50;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .sg-summary-subtitle {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .sg-summary-amount {
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .sg-progress-container {
+        background-color: #f8f9fa;
+        height: 12px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 0.75rem;
+    }
+
+    .sg-progress-bar {
+        background: linear-gradient(90deg, #ffc107, #ffca2c);
+        height: 100%;
+        border-radius: 8px;
+        transition: width 0.8s ease;
+    }
+
+    .sg-progress-text {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+
+    .sg-goals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .sg-goal-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .sg-goal-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .sg-goal-title {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.125rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .sg-goal-meta {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.4;
+    }
+
+    .sg-goal-amount {
+        color: #2c3e50;
+        font-size: 1.375rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .sg-goal-progress-text {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .sg-btn-add-funds {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border: none;
+        color: white;
+        font-weight: 500;
+        border-radius: 10px;
+        padding: 12px 20px;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .sg-btn-add-funds:hover {
+        background: linear-gradient(135deg, #0056b3, #004085);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    .sg-create-section {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .sg-create-title {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .sg-create-subtitle {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 2rem;
+    }
+
+    .sg-form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .sg-form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .sg-form-label {
+        color: #495057;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .sg-form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        width: 100%;
+        transition: border-color 0.3s ease;
+    }
+
+    .sg-form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        outline: 0;
+    }
+
+    .sg-btn-create {
+        background: linear-gradient(135deg, #ffc107, #ffca2c);
+        border: none;
+        color: #2c3e50;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 15px 30px;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        cursor: pointer;
+    }
+
+    .sg-btn-create:hover {
+        background: linear-gradient(135deg, #ffca2c, #ffd60a);
+        color: #2c3e50;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    }
+
+    .sg-empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #6c757d;
+    }
+
+    .sg-empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #dee2e6;
+    }
+
+    /* --- Estilos del Modal Pop-up --- */
+    .sg-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .sg-modal-overlay.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+    }
+
+    .sg-modal {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+    }
+
+    .sg-modal-overlay.active .sg-modal {
+        transform: scale(1);
+    }
+
+    .sg-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .sg-modal-title {
+        color: #2c3e50;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .sg-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+
+    .sg-modal-close:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .sg-wallet-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .sg-wallet-balance {
+        color: #495057;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .sg-wallet-amount {
+        color: #007bff;
+        font-weight: 600;
+        font-size: 1.125rem;
+    }
+
+    .sg-btn-submit {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 12px 24px;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        cursor: pointer;
+    }
+
+    .sg-btn-submit:hover {
+        background: linear-gradient(135deg, #20c997, #17a2b8);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    .sg-btn-cancel {
+        background: #6c757d;
+        border: none;
+        color: white;
+        font-weight: 500;
+        border-radius: 10px;
+        padding: 12px 24px;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        cursor: pointer;
+        margin-top: 0.5rem;
+    }
+
+    .sg-btn-cancel:hover {
+        background: #545b62;
+        transform: translateY(-1px);
+    }
+
+    .sg-error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border: 1px solid #f5c6cb;
+        font-size: 0.875rem;
+    }
+
+    .sg-success-message {
+        background: #d4edda;
+        color: #155724;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border: 1px solid #c3e6cb;
+        font-size: 0.875rem;
+    }
+
+    /* --- Estilos para las opciones de categoría --- */
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .category-option {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.75rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #495057;
+        user-select: none;
+    }
+
+    .category-option:hover {
+        background: #e9ecef;
+        border-color: #dee2e6;
+        transform: translateY(-1px);
+    }
+
+    .category-option.selected {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border-color: #007bff;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .category-option.selected:hover {
+        background: linear-gradient(135deg, #0056b3, #004085);
+        border-color: #0056b3;
+    }
+
+    /* Iconos para las categorías */
+    .category-option::before {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        margin-right: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .category-option[data-value="VACACIONES"]::before {
+        content: "\f5a0";
+        /* fa-plane-departure */
+    }
+
+    .category-option[data-value="AUTO"]::before {
+        content: "\f1b9";
+        /* fa-car */
+    }
+
+    .category-option[data-value="EMERGENCIA"]::before {
+        content: "\f0f3";
+        /* fa-bell */
+    }
+
+    .category-option[data-value="CASA"]::before {
+        content: "\f015";
+        /* fa-home */
+    }
+
+    .category-option[data-value="EDUCACION"]::before {
+        content: "\f19d";
+        /* fa-graduation-cap */
+    }
+
+    .category-option[data-value="SALUD"]::before {
+        content: "\f0f0";
+        /* fa-plus-square */
+    }
+
+    .category-option[data-value="OTRO"]::before {
+        content: "\f1b2";
+        /* fa-cube */
+    }
+
+    @media (max-width: 768px) {
+        .sg-container {
+            padding: 1rem;
         }
-        
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin: 2px 10px;
-            transition: all 0.3s ease;
+
+        .sg-summary-amount {
+            font-size: 1.5rem;
         }
-        
-        .sidebar .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            transform: translateX(5px);
+
+        .sg-form-grid {
+            grid-template-columns: 1fr;
+            gap: 0;
         }
-        
-        .sidebar .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
+
+        .sg-modal {
+            width: 95%;
+            padding: 1.5rem;
         }
-        
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
+
+        .category-grid {
+            grid-template-columns: 1fr;
         }
-        
-        .form-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            max-width: 600px;
-            margin: 0 auto;
+
+        .sg-progress-bar.success {
+            background-color: #28a745;
         }
-        
-        .category-option {
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 15px;
+
+        .sg-progress-bar.info {
+            background-color: #17a2b8;
         }
-        
-        .category-option:hover {
-            border-color: #667eea;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+
+        .sg-progress-bar.warning {
+            background-color: #ffc107;
         }
-        
-        .category-option.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea10, #764ba210);
+
+        .sg-progress-bar.danger {
+            background-color: #dc3545;
         }
-        
-        .category-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            margin: 0 auto 10px;
-        }
-        
-        .vacaciones { background: linear-gradient(135deg, #FF6B6B, #FF8E8E); }
-        .auto { background: linear-gradient(135deg, #4ECDC4, #44A08D); }
-        .emergencia { background: linear-gradient(135deg, #FFE66D, #FF6B6B); }
-        .casa { background: linear-gradient(135deg, #A8E6CF, #88D8A3); }
-        .educacion { background: linear-gradient(135deg, #FFD93D, #6BCF7F); }
-        .salud { background: linear-gradient(135deg, #FF8A80, #FF5722); }
-        .otro { background: linear-gradient(135deg, #B39DDB, #9575CD); }
-        
-        .form-control {
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
-            padding: 12px 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-outline-secondary {
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="p-3">
-            <h4 class="text-white mb-4">
-                <i class="fas fa-wallet me-2"></i>
-                Mi Billetera
-            </h4>
-            <nav class="nav flex-column">
-                <a class="nav-link" href="/">
-                    <i class="fas fa-home me-2"></i>
-                    Inicio
-                </a>
-                <a class="nav-link" href="#">
-                    <i class="fas fa-chart-line me-2"></i>
-                    Estadísticas
-                </a>
-                <a class="nav-link" href="#">
-                    <i class="fas fa-exchange-alt me-2"></i>
-                    Transacciones
-                </a>
-                <a class="nav-link active" href="{% url 'savings_goals:list' %}">
-                    <i class="fas fa-bullseye me-2"></i>
-                    Ahorro Objetivo
-                </a>
-                <a class="nav-link" href="#">
-                    <i class="fas fa-credit-card me-2"></i>
-                    Solicitar Crédito
-                </a>
-                <a class="nav-link" href="#">
-                    <i class="fas fa-gift me-2"></i>
-                    Beneficios
-                </a>
-                <a class="nav-link" href="#">
-                    <i class="fas fa-user me-2"></i>
-                    Perfil
-                </a>
-                <a class="nav-link" href="#">
-                    <i class="fas fa-cog me-2"></i>
-                    Ajustes
-                </a>
-            </nav>
+    }
+</style>
+
+<div class="sg-container">
+    <h1 class="sg-page-title">Crear Nuevo Objetivo</h1>
+
+    <form method="post" action="" class="sg-create-section">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="sg-form-group">
+            <label class="sg-form-label" for="id_name">Nombre del objetivo</label>
+            {{ form.name }}
+            {{ form.name.errors }}
         </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container-fluid">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>
-                    <i class="fas fa-plus-circle me-2 text-primary"></i>
-                    Crear Nuevo Objetivo de Ahorro
-                </h1>
-                <a href="{% url 'savings_goals:list' %}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>
-                    Volver
-                </a>
+        <div class="sg-form-group">
+            <label class="sg-form-label" for="id_category">Categoría</label>
+            {{ form.category }}
+            {{ form.category.errors }}
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="sg-form-group">
+                    <label class="sg-form-label" for="id_target_amount">Meta ($)</label>
+                    {{ form.target_amount }}
+                    {{ form.target_amount.errors }}
+                </div>
             </div>
-
-            <!-- Form Card -->
-            <div class="form-card">
-                <form method="post" id="goalForm">
-                    {% csrf_token %}
-                    
-                    <!-- Step 1: Nombre del objetivo -->
-                    <div class="mb-4">
-                        <h5 class="mb-3">
-                            <i class="fas fa-bullseye me-2 text-primary"></i>
-                            ¿Cuál es tu objetivo?
-                        </h5>
-                        <div class="mb-3">
-                            <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">
-                                Nombre del objetivo
-                            </label>
-                            {{ form.name }}
-                            {% if form.name.errors %}
-                                <div class="text-danger mt-1">
-                                    {{ form.name.errors }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Categoría -->
-                    <div class="mb-4">
-                        <h5 class="mb-3">
-                            <i class="fas fa-tags me-2 text-primary"></i>
-                            Selecciona una categoría
-                        </h5>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <div class="category-option" data-value="VACACIONES">
-                                    <div class="category-icon vacaciones">
-                                        <i class="fas fa-plane"></i>
-                                    </div>
-                                    <h6>Vacaciones</h6>
-                                    <small class="text-muted">Viajes y descanso</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="category-option" data-value="AUTO">
-                                    <div class="category-icon auto">
-                                        <i class="fas fa-car"></i>
-                                    </div>
-                                    <h6>Nuevo auto</h6>
-                                    <small class="text-muted">Vehículo propio</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="category-option" data-value="EMERGENCIA">
-                                    <div class="category-icon emergencia">
-                                        <i class="fas fa-shield-alt"></i>
-                                    </div>
-                                    <h6>Fondo de emergencia</h6>
-                                    <small class="text-muted">Para imprevistos</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="category-option" data-value="CASA">
-                                    <div class="category-icon casa">
-                                        <i class="fas fa-home"></i>
-                                    </div>
-                                    <h6>Casa</h6>
-                                    <small class="text-muted">Hogar propio</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="category-option" data-value="EDUCACION">
-                                    <div class="category-icon educacion">
-                                        <i class="fas fa-graduation-cap"></i>
-                                    </div>
-                                    <h6>Educación</h6>
-                                    <small class="text-muted">Estudios y capacitación</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="category-option" data-value="OTRO">
-                                    <div class="category-icon otro">
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <h6>Otro</h6>
-                                    <small class="text-muted">Objetivo personalizado</small>
-                                </div>
-                            </div>
-                        </div>
-                        {{ form.category }}
-                        {% if form.category.errors %}
-                            <div class="text-danger mt-2">
-                                {{ form.category.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Step 3: Monto y fecha -->
-                    <div class="mb-4">
-                        <h5 class="mb-3">
-                            <i class="fas fa-dollar-sign me-2 text-primary"></i>
-                            Define tu meta
-                        </h5>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.target_amount.id_for_label }}" class="form-label fw-bold">
-                                    Monto objetivo ($)
-                                </label>
-                                {{ form.target_amount }}
-                                {% if form.target_amount.errors %}
-                                    <div class="text-danger mt-1">
-                                        {{ form.target_amount.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.target_date.id_for_label }}" class="form-label fw-bold">
-                                    Fecha objetivo
-                                </label>
-                                {{ form.target_date }}
-                                {% if form.target_date.errors %}
-                                    <div class="text-danger mt-1">
-                                        {{ form.target_date.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary-custom btn-lg me-3">
-                            <i class="fas fa-save me-2"></i>
-                            Crear Objetivo de Ahorro
-                        </button>
-                        <a href="{% url 'savings_goals:list' %}" class="btn btn-outline-secondary btn-lg">
-                            Cancelar
-                        </a>
-                    </div>
-                </form>
+            <div class="col-md-6">
+                <div class="sg-form-group">
+                    <label class="sg-form-label" for="id_target_date">Fecha objetivo</label>
+                    {{ form.target_date }}
+                    {{ form.target_date.errors }}
+                </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Manejar selección de categoría
-        document.querySelectorAll('.category-option').forEach(option => {
-            option.addEventListener('click', function() {
-                // Remover selección anterior
-                document.querySelectorAll('.category-option').forEach(opt => opt.classList.remove('selected'));
-                
-                // Agregar selección actual
-                this.classList.add('selected');
-                
-                // Actualizar el campo hidden
-                document.getElementById('id_category').value = this.dataset.value;
-            });
-        });
-
-        // Set minimum date to today
-        document.getElementById('id_target_date').min = new Date().toISOString().split('T')[0];
-    </script>
-</body>
-</html>
+        <div class="text-end">
+            <button type="submit" class="sg-btn-submit">Crear</button>
+            <a href="{% url 'savings_goals:list' %}" class="sg-btn-cancel ms-2">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

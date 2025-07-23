@@ -10,34 +10,47 @@ from .forms import SavingsGoalForm, AddFundsForm, WithdrawFundsForm
 
 @login_required
 def savings_goals_list(request):
-    """Vista principal que muestra todos los objetivos de ahorro del usuario"""
     goals = SavingsGoal.objects.filter(user=request.user).exclude(status="CANCELADO")
 
-    # Calcular estadísticas generales
     total_saved = sum(goal.current_amount for goal in goals)
     total_target = sum(goal.target_amount for goal in goals)
     overall_progress = 0
     if total_target > 0:
         overall_progress = (float(total_saved) / float(total_target)) * 100
 
+    # Enriquecer cada objetivo con colores de progreso
+    for goal in goals:
+        progress = goal.progress_percentage
+        if progress >= 100:
+            goal.progress_color = "success"
+        elif progress >= 50:
+            goal.progress_color = "info"
+        elif progress >= 25:
+            goal.progress_color = "warning"
+        else:
+            goal.progress_color = "danger"
+
     context = {
         "goals": goals,
         "total_saved": total_saved,
         "total_target": total_target,
-        "overall_progress": overall_progress,
+        "overall_progress": round(overall_progress, 2),
+        "wallet_balance": (
+            request.user.wallet.balance if hasattr(request.user, "wallet") else 0
+        ),
     }
     return render(request, "savings_goals/list.html", context)
 
 
 @login_required
 def create_savings_goal(request):
-    """Vista para crear un nuevo objetivo de ahorro"""
     if request.method == "POST":
         form = SavingsGoalForm(request.POST)
         if form.is_valid():
             goal = form.save(commit=False)
             goal.user = request.user
             goal.save()
+
             messages.success(request, f'Objetivo "{goal.name}" creado exitosamente!')
             return redirect("savings_goals:list")
     else:
@@ -48,9 +61,8 @@ def create_savings_goal(request):
 
 @login_required
 def goal_detail(request, goal_id):
-    """Vista detallada de un objetivo específico"""
     goal = get_object_or_404(SavingsGoal, id=goal_id, user=request.user)
-    transactions = goal.transactions.all()[:10]  # Últimas 10 transacciones
+    transactions = goal.transactions.all()[:10]
 
     context = {
         "goal": goal,
@@ -62,17 +74,15 @@ def goal_detail(request, goal_id):
 
 @login_required
 def add_funds(request, goal_id):
-    """Vista para agregar fondos a un objetivo"""
     goal = get_object_or_404(SavingsGoal, id=goal_id, user=request.user)
 
     if goal.status != "ACTIVO":
         messages.error(request, "No puedes agregar fondos a un objetivo inactivo")
-        return redirect("savings_goals:detail", goal_id=goal_id)
+        return redirect("savings_goals:list")
 
-    # Verificar que el usuario tenga una wallet
     if not hasattr(request.user, "wallet"):
         messages.error(request, "No tienes una billetera configurada")
-        return redirect("savings_goals:detail", goal_id=goal_id)
+        return redirect("savings_goals:list")
 
     user_wallet = request.user.wallet
 
@@ -84,13 +94,9 @@ def add_funds(request, goal_id):
 
             try:
                 with db_transaction.atomic():
-                    # Restar de la billetera
                     user_wallet.update_balance(amount, "subtract")
-
-                    # Agregar al objetivo
                     goal.add_funds(amount)
 
-                    # Registrar la transacción
                     SavingsTransaction.objects.create(
                         savings_goal=goal,
                         transaction_type="DEPOSIT",
@@ -98,7 +104,6 @@ def add_funds(request, goal_id):
                         description=description or f"Depósito a {goal.name}",
                     )
 
-                    # Agregar transacción a la wallet también
                     user_wallet.add_transaction(
                         transaction_type="SAVINGS_DEPOSIT",
                         amount=amount,
@@ -109,7 +114,7 @@ def add_funds(request, goal_id):
                 messages.success(
                     request, f'${amount} agregados exitosamente a "{goal.name}"'
                 )
-                return redirect("savings_goals:detail", goal_id=goal_id)
+                return redirect("savings_goals:list")
 
             except ValueError as e:
                 messages.error(request, str(e))
@@ -126,14 +131,12 @@ def add_funds(request, goal_id):
 
 @login_required
 def withdraw_funds(request, goal_id):
-    """Vista para retirar fondos de un objetivo"""
     goal = get_object_or_404(SavingsGoal, id=goal_id, user=request.user)
 
     if goal.current_amount <= 0:
         messages.error(request, "No hay fondos disponibles para retirar")
         return redirect("savings_goals:detail", goal_id=goal_id)
 
-    # Verificar que el usuario tenga una wallet
     if not hasattr(request.user, "wallet"):
         messages.error(request, "No tienes una billetera configurada")
         return redirect("savings_goals:detail", goal_id=goal_id)
@@ -148,13 +151,9 @@ def withdraw_funds(request, goal_id):
 
             try:
                 with db_transaction.atomic():
-                    # Retirar del objetivo
                     goal.withdraw_funds(amount)
-
-                    # Agregar a la billetera
                     user_wallet.update_balance(amount, "add")
 
-                    # Registrar la transacción
                     SavingsTransaction.objects.create(
                         savings_goal=goal,
                         transaction_type="WITHDRAWAL",
@@ -162,7 +161,6 @@ def withdraw_funds(request, goal_id):
                         description=description or f"Retiro de {goal.name}",
                     )
 
-                    # Agregar transacción a la wallet también
                     user_wallet.add_transaction(
                         transaction_type="SAVINGS_WITHDRAWAL",
                         amount=amount,
@@ -186,32 +184,3 @@ def withdraw_funds(request, goal_id):
         "available_amount": goal.current_amount,
     }
     return render(request, "savings_goals/withdraw_funds.html", context)
-
-
-@login_required
-def delete_goal(request, goal_id):
-    """Vista para eliminar/cancelar un objetivo"""
-    goal = get_object_or_404(SavingsGoal, id=goal_id, user=request.user)
-
-    if request.method == "POST":
-        if goal.current_amount > 0:
-            # Si hay fondos, preguntar qué hacer
-            action = request.POST.get("action")
-            if action == "return_funds":
-                # Devolver fondos a la billetera
-                if hasattr(request.user, "wallet"):
-                    user_wallet = request.user.wallet
-                    user_wallet.update_balance(goal.current_amount, "add")
-                    user_wallet.add_transaction(
-                        transaction_type="SAVINGS_RETURN",
-                        amount=goal.current_amount,
-                        description=f"Devolución de fondos del objetivo cancelado: {goal.name}",
-                        status="COMPLETED",
-                    )
-
-        goal.status = "CANCELADO"
-        goal.save()
-        messages.success(request, f'Objetivo "{goal.name}" cancelado exitosamente')
-        return redirect("savings_goals:list")
-
-    return render(request, "savings_goals/confirm_delete.html", {"goal": goal})

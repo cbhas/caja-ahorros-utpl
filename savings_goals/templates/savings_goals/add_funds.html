@@ -504,47 +504,33 @@
 </style>
 
 <div class="sg-container">
-    <h1 class="sg-page-title">Ahorro Objetivo</h1>
+    <h1 class="sg-page-title">Agregar Fondos a "{{ goal.name }}"</h1>
 
-    <!-- Botón para crear nuevo objetivo -->
-    <div class="text-end mb-4">
-        <a href="{% url 'savings_goals:create' %}" class="sg-btn-create">
-            <i class="fas fa-plus-circle me-2"></i> Crear Nuevo Objetivo
-        </a>
+    <div class="sg-wallet-info mb-4">
+        <p class="sg-wallet-balance">Saldo disponible en billetera:</p>
+        <p class="sg-wallet-amount">${{ wallet_balance|floatformat:2 }}</p>
     </div>
 
-    <!-- Lista de objetivos existentes -->
-    {% if goals %}
-    <div class="sg-goals-grid">
-        {% for goal in goals %}
-        <div class="sg-goal-card">
-            <div class="sg-goal-title">{{ goal.name }}</div>
-            <div class="sg-goal-meta">
-                Meta: ${{ goal.target_amount|floatformat:2 }}<br>
-                Fecha: {{ goal.target_date|date:"d/m/Y" }}
-            </div>
-            <div class="sg-goal-amount">
-                ${{ goal.current_amount|floatformat:2 }} / ${{ goal.target_amount|floatformat:2 }}
-            </div>
-            <div class="sg-progress-container">
-                <div class="sg-progress-bar {{ goal.progress_color }}"
-                    style="width: {{ goal.progress_percentage|floatformat:0 }}%;"></div>
-            </div>
-            <div class="sg-goal-progress-text">
-                Has ahorrado el {{ goal.progress_percentage|floatformat:1 }}% de tu meta
-            </div>
-            {% if goal.status == 'ACTIVO' %}
-            <a href="{% url 'savings_goals:add_funds' goal.id %}" class="sg-btn-add-funds">Agregar fondos</a>
-            {% endif %}
+    <form method="post" action="" class="sg-create-section">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="sg-form-group">
+            <label class="sg-form-label" for="id_amount">Cantidad a agregar</label>
+            {{ form.amount }}
+            {{ form.amount.errors }}
         </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="sg-empty-state">
-        <div class="sg-empty-icon"><i class="fas fa-piggy-bank"></i></div>
-        <h3>No tienes objetivos de ahorro aún</h3>
-        <p>Comienza creando tu primer objetivo de ahorro</p>
-    </div>
-    {% endif %}
+
+        <div class="sg-form-group">
+            <label class="sg-form-label" for="id_description">Descripción</label>
+            {{ form.description }}
+            {{ form.description.errors }}
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="sg-btn-submit">Agregar</button>
+            <a href="{% url 'savings_goals:list' %}" class="sg-btn-cancel ms-2">Cancelar</a>
+        </div>
+    </form>
 </div>
 {% endblock %}

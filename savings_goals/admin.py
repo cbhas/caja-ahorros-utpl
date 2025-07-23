@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import SavingsGoal, SavingsTransaction
 
 
@@ -30,3 +31,11 @@ class SavingsTransactionAdmin(admin.ModelAdmin):
     list_filter = ["transaction_type", "created_at"]
     search_fields = ["savings_goal__name", "description"]
     readonly_fields = ["created_at"]
+
+
+def status_colored(self, obj):
+    color = "green" if obj.status == "COMPLETADO" else "black"
+    return format_html('<span style="color:{};">{}</span>', color, obj.status)
+
+
+status_colored.short_description = "Estado"

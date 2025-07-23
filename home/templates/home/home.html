@@ -4,333 +4,331 @@
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
-        <div class="mb-4">
-            <h5 class="text-muted mb-3" style="font-size: 28px">Hola, <b>{{ client.first_name }}</b></h5>
-            <div class="balance-card p-4" style="background-color: #004370; color: white; border-radius: 15px">
-                <small class="d-block mb-2" style="font-size: 20px">Tu balance actual</small>
-                <h2 class="mb-2" style="font-size: 44px">${{ current_balance.balance|floatformat:2 }}</h2>
-                <div class="d-flex justify-content-between">
-                    <span style="font-size: 20px"><i class="bi bi-arrow-up"
-                                                     style="font-size: 17px"></i> <b>Ingresos:</b> ${{ daily_income }}</span>
-                    <span style="font-size: 20px"><i class="bi bi-arrow-down"
-                                                     style="font-size: 17px"></i> <b>Gastos:</b> ${{ daily_expenses }}</span>
-                </div>
+<div class="container-fluid">
+    <div class="mb-4">
+        <h5 class="text-muted mb-3" style="font-size: 28px">Hola, <b>{{ client.first_name }}</b></h5>
+        <div class="balance-card p-4" style="background-color: #004370; color: white; border-radius: 15px">
+            <small class="d-block mb-2" style="font-size: 20px">Tu balance actual</small>
+            <h2 class="mb-2" style="font-size: 44px">${{ current_balance.balance|floatformat:2 }}</h2>
+            <div class="d-flex justify-content-between">
+                <span style="font-size: 20px"><i class="bi bi-arrow-up" style="font-size: 17px"></i> <b>Ingresos:</b>
+                    ${{ daily_income }}</span>
+                <span style="font-size: 20px"><i class="bi bi-arrow-down" style="font-size: 17px"></i> <b>Gastos:</b>
+                    ${{ daily_expenses }}</span>
             </div>
         </div>
+    </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col">
-                <button class="btn"
-                        style="background-color: #FCBF01; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
-                        data-bs-toggle="modal" data-bs-target="#modalEnviarDinero">
+    <div class="row g-3 mb-4">
+        <div class="col">
+            <button class="btn"
+                style="background-color: #FCBF01; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
+                data-bs-toggle="modal" data-bs-target="#modalEnviarDinero">
+                <i class="bi bi-send me-2"></i>
+                Enviar Dinero
+            </button>
+            <small class="text-muted d-block mt-1 text-center">Envía dinero a cualquier cuenta</small>
+        </div>
+        <div class="col">
+            <button class="btn"
+                style="background-color: #004370; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
+                data-bs-toggle="modal" data-bs-target="#modalRecibirDinero">
+                <i class="bi bi-download me-2"></i>
+                Recibir Dinero
+            </button>
+            <small class="text-muted d-block mt-1 text-center">Recibe dinero fácilmente</small>
+        </div>
+        <div class="col">
+            <button class="btn"
+                style="background-color: #878787; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
+                onclick="window.location.href='{% url 'transaction_list' %}'">
+                <i class="bi bi-clock-history me-2"></i>
+                Ver Movimientos
+            </button>
+            <small class="text-muted d-block mt-1 text-center">Consulta tu historial de transacciones</small>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Noticias Destacadas</h5>
+            <div class="row g-3">
+                {% for n in news %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="{{ n.image.url }}" alt="New" class="card-img-top" style="max-width: 100%">
+                            <div class="event-content">
+                                <h2 class="event-title">{{ n.title }}</h2>
+                                <div class="event-info">
+                                    <i class="bi bi-calendar"></i>
+                                    {{ n.date }}
+                                </div>
+                                <div class="event-info">
+                                    <i class="bi bi-geo-alt"></i>
+                                    {{ n.place }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'news_list' %}" class="nav-link {% if request.path == '/news/' %}active{% endif %}">Ver
+                    todas las noticias</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Actividad Reciente</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        {% for transaction in recent_transactions %}
+                        <tr>
+                            <td>
+                                {% if transaction.transaction_type == 'TRANSFER' %}
+                                <b>Enviado a:</b> {{ transaction.recipient.get_full_name }}
+                                {% else %}
+                                <b>Recibido de:</b> {{ transaction.wallet.user.get_full_name }}
+                                {% endif %}
+                            </td>
+                            <td>{{ transaction.description }}</td>
+                            <td
+                                class="{% if transaction.transaction_type == 'DEPOSIT' %}text-success{% else %}text-danger{% endif %}">
+                                {% if transaction.transaction_type == 'DEPOSIT' %}+{% else %}-{% endif %}
+                                ${{ transaction.amount|floatformat:2 }}
+                            </td>
+                            <td class="text-muted">{{ transaction.created_at|date:"Y-m-d" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No hay transacciones recientes</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'transaction_list' %}"
+                    class="nav-link {% if request.path == '/transactions/' %}active{% endif %}">Ver todas las
+                    transacciones</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Enviar Dinero -->
+<div class="modal fade" id="modalEnviarDinero" tabindex="-1" aria-labelledby="modalEnviarDineroLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 bg-gradient" style="background-color: #004370; padding: 2rem 2rem 1rem;">
+                <h5 class="modal-title text-white" id="modalEnviarDineroLabel" style="font-size: 24px;">
                     <i class="bi bi-send me-2"></i>
                     Enviar Dinero
-                </button>
-                <small class="text-muted d-block mt-1 text-center">Envía dinero a cualquier cuenta</small>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
-            <div class="col">
-                <button class="btn"
-                        style="background-color: #004370; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
-                        data-bs-toggle="modal" data-bs-target="#modalRecibirDinero">
+            <div class="modal-body p-4">
+                <div id="alertMessages"></div>
+                <form id="transferForm" method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <div class="form-group">
+                            <p><strong>Cédula del Destinatario</strong> <span for="recipient_cedula"></span></p>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="recipient_cedula" name="recipient_cedula"
+                                    required>
+                                <button type="button" class="btn btn-outline-secondary" id="validateAccount">
+                                    Validar
+                                </button>
+                            </div>
+                            <small class="text-danger" id="cedulaError"></small>
+                        </div>
+                        <div id="recipientInfo" class="mt-3" style="display: none;">
+                            <p><strong>Nombre: </strong> <span id="recipientName"></span></p>
+                            <p><strong>Correo: </strong> <span id="recipientEmail"></span></p>
+                        </div>
+
+                        <p><strong>Monto:</strong> {{ form.amount|safe }}</p>
+                        <p><strong>Descripción:</strong> {{ form.description|safe }}</p>
+                    </div>
+                    <button type="submit" class="btn w-100 text-white fw-bold py-3"
+                        style="background-color: #004370; border-radius: 12px; font-size: 18px;">
+                        Realizar Transferencia
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Recibir Dinero -->
+<div class="modal fade" id="modalRecibirDinero" tabindex="-1" aria-labelledby="modalRecibirDineroLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 bg-gradient" style="background-color: #FCBF01; padding: 2rem 2rem 1rem;">
+                <h5 class="modal-title text-white" id="modalRecibirDineroLabel" style="font-size: 24px;">
                     <i class="bi bi-download me-2"></i>
                     Recibir Dinero
-                </button>
-                <small class="text-muted d-block mt-1 text-center">Recibe dinero fácilmente</small>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
-            <div class="col">
-                <button class="btn"
-                        style="background-color: #878787; border-radius: 15px; color: white; font-size: 20px; width: 100%; padding: 25px; text-align: center;"
-                        onclick="window.location.href='{% url 'transaction_list' %}'">
-                    <i class="bi bi-clock-history me-2"></i>
-                    Ver Movimientos
-                </button>
-                <small class="text-muted d-block mt-1 text-center">Consulta tu historial de transacciones</small>
-            </div>
-        </div>
+            <div class="modal-body p-4">
+                <p class="text-muted mb-4">Comparte esta información para recibir dinero en tu cuenta
+                    PUNTOPYMES.</p>
 
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title mb-4">Noticias Destacadas</h5>
-                <div class="row g-3">
-                    {% for n in news %}
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <img src="{{ n.image.url }}" alt="New" class="card-img-top" style="max-width: 100%">
-                                    <div class="event-content">
-                                        <h2 class="event-title">{{ n.title }}</h2>
-                                        <div class="event-info">
-                                            <i class="bi bi-calendar"></i>
-                                            {{ n.date }}
-                                        </div>
-                                        <div class="event-info">
-                                            <i class="bi bi-geo-alt"></i>
-                                            {{ n.place }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="text-center mt-3">
-                    <a href="{% url 'news_list' %}"
-                       class="nav-link {% if request.path == '/news/' %}active{% endif %}">Ver todas las noticias</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title mb-4">Actividad Reciente</h5>
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                        {% for transaction in recent_transactions %}
-                            <tr>
-                                <td>
-                                    {% if transaction.transaction_type == 'TRANSFER' %}
-                                        <b>Enviado a:</b> {{ transaction.recipient.get_full_name }}
-                                    {% else %}
-                                        <b>Recibido de:</b> {{ transaction.wallet.user.get_full_name }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ transaction.description }}</td>
-                                <td class="{% if transaction.transaction_type == 'DEPOSIT' %}text-success{% else %}text-danger{% endif %}">
-                                    {% if transaction.transaction_type == 'DEPOSIT' %}+{% else %}-{% endif %}
-                                    ${{ transaction.amount|floatformat:2 }}
-                                </td>
-                                <td class="text-muted">{{ transaction.created_at|date:"Y-m-d" }}</td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="3" class="text-center">No hay transacciones recientes</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="text-center mt-3">
-                    <a href="{% url 'transaction_list' %}"
-                       class="nav-link {% if request.path == '/transactions/' %}active{% endif %}">Ver todas las
-                        transacciones</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para Enviar Dinero -->
-    <div class="modal fade" id="modalEnviarDinero" tabindex="-1" aria-labelledby="modalEnviarDineroLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                <div class="modal-header border-0 bg-gradient"
-                     style="background-color: #004370; padding: 2rem 2rem 1rem;">
-                    <h5 class="modal-title text-white" id="modalEnviarDineroLabel" style="font-size: 24px;">
-                        <i class="bi bi-send me-2"></i>
-                        Enviar Dinero
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div id="alertMessages"></div>
-                    <form id="transferForm" method="POST" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        <div class="mb-4">
-                            <div class="form-group">
-                                <p><strong>Cédula del Destinatario</strong> <span for="recipient_cedula"></span></p>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="recipient_cedula"
-                                           name="recipient_cedula" required>
-                                    <button type="button" class="btn btn-outline-secondary" id="validateAccount">
-                                        Validar
-                                    </button>
-                                </div>
-                                <small class="text-danger" id="cedulaError"></small>
-                            </div>
-                            <div id="recipientInfo" class="mt-3" style="display: none;">
-                                <p><strong>Nombre: </strong> <span id="recipientName"></span></p>
-                                <p><strong>Correo: </strong> <span id="recipientEmail"></span></p>
-                            </div>
-
-                            <p><strong>Monto:</strong> {{ form.amount|safe }}</p>
-                            <p><strong>Descripción:</strong> {{ form.description|safe }}</p>
-                        </div>
-                        <button type="submit" class="btn w-100 text-white fw-bold py-3"
-                                style="background-color: #004370; border-radius: 12px; font-size: 18px;">
-                            Realizar Transferencia
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para Recibir Dinero -->
-    <div class="modal fade" id="modalRecibirDinero" tabindex="-1" aria-labelledby="modalRecibirDineroLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                <div class="modal-header border-0 bg-gradient"
-                     style="background-color: #FCBF01; padding: 2rem 2rem 1rem;">
-                    <h5 class="modal-title text-white" id="modalRecibirDineroLabel" style="font-size: 24px;">
-                        <i class="bi bi-download me-2"></i>
-                        Recibir Dinero
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted mb-4">Comparte esta información para recibir dinero en tu cuenta
-                        PUNTOPYMES.</p>
-
-                    <div class="bg-light p-4 rounded-3 mb-3">
-                        <div class="mb-3">
-                            <label class="text-muted small mb-1">Nombre completo</label>
-                            <p class="fw-bold mb-0"
-                               id="nombreCompleto">{{ client.first_name }} {{ client.last_name }}</p>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="text-muted small mb-1">Correo electrónico</label>
-                            <p class="fw-bold mb-0" id="email">{{ client.email }}</p>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="text-muted small mb-1">Número de cédula</label>
-                            <p class="fw-bold mb-0" id="cedula">{{ client.document_number }}</p>
-                        </div>
-
-                        <div>
-                            <label class="text-muted small mb-1">Banco</label>
-                            <p class="fw-bold mb-0" id="banco">UTPL Wallet</p>
-                        </div>
+                <div class="bg-light p-4 rounded-3 mb-3">
+                    <div class="mb-3">
+                        <label class="text-muted small mb-1">Nombre completo</label>
+                        <p class="fw-bold mb-0" id="nombreCompleto">{{ client.first_name }} {{ client.last_name }}</p>
                     </div>
 
-                    <!-- Botón para copiar toda la información -->
-                    <button id="btnCopiar" class="btn w-100 text-white fw-bold py-3"
-                            style="background-color: #FCBF01; border-radius: 12px; font-size: 18px;">
-                        <i class="bi bi-clipboard me-2"></i>
-                        <span>Copiar información</span>
-                    </button>
+                    <div class="mb-3">
+                        <label class="text-muted small mb-1">Correo electrónico</label>
+                        <p class="fw-bold mb-0" id="email">{{ client.email }}</p>
+                    </div>
 
-                    <!-- Toast para mostrar mensaje de éxito -->
-                    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-                        <div id="copyToast" class="toast align-items-center text-white bg-success border-0" role="alert"
-                             aria-live="assertive" aria-atomic="true">
-                            <div class="d-flex">
-                                <div class="toast-body">
-                                    <i class="bi bi-check-circle me-2"></i>
-                                    ¡Información copiada con éxito!
-                                </div>
-                                <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                                        data-bs-dismiss="toast" aria-label="Close"></button>
+                    <div class="mb-3">
+                        <label class="text-muted small mb-1">Número de cédula</label>
+                        <p class="fw-bold mb-0" id="cedula">{{ client.document_number }}</p>
+                    </div>
+
+                    <div>
+                        <label class="text-muted small mb-1">Banco</label>
+                        <p class="fw-bold mb-0" id="banco">UTPL Wallet</p>
+                    </div>
+                </div>
+
+                <!-- Botón para copiar toda la información -->
+                <button id="btnCopiar" class="btn w-100 text-white fw-bold py-3"
+                    style="background-color: #FCBF01; border-radius: 12px; font-size: 18px;">
+                    <i class="bi bi-clipboard me-2"></i>
+                    <span>Copiar información</span>
+                </button>
+
+                <!-- Toast para mostrar mensaje de éxito -->
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                    <div id="copyToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+                        aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi bi-check-circle me-2"></i>
+                                ¡Información copiada con éxito!
                             </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"></button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
 
-            const btnCopiar = document.getElementById('btnCopiar');
-            btnCopiar.addEventListener('click', function () {
-                // Obtener los valores
-                const nombre = document.getElementById('nombreCompleto').textContent.trim();
-                const email = document.getElementById('email').textContent.trim();
-                const cedula = document.getElementById('cedula').textContent.trim();
-                const banco = document.getElementById('banco').textContent.trim();
-                // Crear el texto formateado con saltos de línea explícitos
-                const textoCopiado = `Nombre: ${nombre}\nEmail: ${email}\nCédula: ${cedula}\nBanco: ${banco}`;
-                // Copiar al portapapeles usando la API moderna
-                navigator.clipboard.writeText(textoCopiado).then(function () {
-                    // Cambiar el texto del botón temporalmente
-                    const originalHTML = btnCopiar.innerHTML;
-                    btnCopiar.innerHTML = '<i class="bi bi-check-circle me-2"></i>¡Copiado!';
-                    // Mostrar el toast
-                    const toast = new bootstrap.Toast(document.getElementById('copyToast'));
-                    toast.show();
-                    // Restaurar el texto original después de 2 segundos
-                    setTimeout(function () {
-                        btnCopiar.innerHTML = originalHTML;
-                    }, 2000);
-                }).catch(function (err) {
-                    console.error('Error al copiar: ', err);
-                })
+        const btnCopiar = document.getElementById('btnCopiar');
+        btnCopiar.addEventListener('click', function () {
+            // Obtener los valores
+            const nombre = document.getElementById('nombreCompleto').textContent.trim();
+            const email = document.getElementById('email').textContent.trim();
+            const cedula = document.getElementById('cedula').textContent.trim();
+            const banco = document.getElementById('banco').textContent.trim();
+            // Crear el texto formateado con saltos de línea explícitos
+            const textoCopiado = `Nombre: ${nombre}\nEmail: ${email}\nCédula: ${cedula}\nBanco: ${banco}`;
+            // Copiar al portapapeles usando la API moderna
+            navigator.clipboard.writeText(textoCopiado).then(function () {
+                // Cambiar el texto del botón temporalmente
+                const originalHTML = btnCopiar.innerHTML;
+                btnCopiar.innerHTML = '<i class="bi bi-check-circle me-2"></i>¡Copiado!';
+                // Mostrar el toast
+                const toast = new bootstrap.Toast(document.getElementById('copyToast'));
+                toast.show();
+                // Restaurar el texto original después de 2 segundos
+                setTimeout(function () {
+                    btnCopiar.innerHTML = originalHTML;
+                }, 2000);
+            }).catch(function (err) {
+                console.error('Error al copiar: ', err);
             })
+        })
 
-            const validateAccountButton = document.getElementById('validateAccount');
-            const recipientCedulaInput = document.getElementById('recipient_cedula');
-            const cedulaError = document.getElementById('cedulaError');
-            const recipientInfo = document.getElementById('recipientInfo');
-            const recipientName = document.getElementById('recipientName');
-            const recipientEmail = document.getElementById('recipientEmail');
-            const transferForm = document.getElementById('transferForm');
-            const alertMessages = document.getElementById('alertMessages');
+        const validateAccountButton = document.getElementById('validateAccount');
+        const recipientCedulaInput = document.getElementById('recipient_cedula');
+        const cedulaError = document.getElementById('cedulaError');
+        const recipientInfo = document.getElementById('recipientInfo');
+        const recipientName = document.getElementById('recipientName');
+        const recipientEmail = document.getElementById('recipientEmail');
+        const transferForm = document.getElementById('transferForm');
+        const alertMessages = document.getElementById('alertMessages');
 
-            validateAccountButton.addEventListener('click', function () {
-                const cedula = recipientCedulaInput.value;
+        validateAccountButton.addEventListener('click', function () {
+            const cedula = recipientCedulaInput.value;
 
-                if (cedula.length !== 10) {
-                    cedulaError.textContent = 'La cédula debe tener exactamente 10 dígitos.';
-                    recipientInfo.style.display = 'none';
-                    return;
-                }
+            if (cedula.length !== 10) {
+                cedulaError.textContent = 'La cédula debe tener exactamente 10 dígitos.';
+                recipientInfo.style.display = 'none';
+                return;
+            }
 
-                fetch('/validate_account/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: `cedula=${cedula}`
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.valid) {
-                            cedulaError.textContent = '';
-                            recipientName.textContent = data.recipient.name;
-                            recipientEmail.textContent = data.recipient.email;
-                            recipientInfo.style.display = 'block';
-                        } else {
-                            cedulaError.textContent = data.message;
-                            recipientInfo.style.display = 'none';
-                        }
-                    });
-            });
-
-            transferForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                const formData = new FormData(transferForm);
-                fetch('', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alertMessages.innerHTML = `<div class="alert alert-success border-0 rounded-3">${data.message}</div>`;
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 2000);
-                        } else {
-                            a
-                            alertMessages.innerHTML = `<div class="alert alert-danger border-0 rounded-3">${data.message}</div>`;
-                        }
-                    });
-            });
+            fetch('/validate_account/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `cedula=${cedula}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.valid) {
+                        cedulaError.textContent = '';
+                        recipientName.textContent = data.recipient.name;
+                        recipientEmail.textContent = data.recipient.email;
+                        recipientInfo.style.display = 'block';
+                    } else {
+                        cedulaError.textContent = data.message;
+                        recipientInfo.style.display = 'none';
+                    }
+                });
         });
-    </script>
+
+        transferForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(transferForm);
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alertMessages.innerHTML = `<div class="alert alert-success border-0 rounded-3">${data.message}</div>`;
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        a
+                        alertMessages.innerHTML = `<div class="alert alert-danger border-0 rounded-3">${data.message}</div>`;
+                    }
+                });
+        });
+    });
+</script>
 
 
 {% endblock %}

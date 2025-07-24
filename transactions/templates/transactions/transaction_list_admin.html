@@ -225,6 +225,33 @@
             color: #f59e0b;
             border-color: #f59e0b;
         }
+
+        .modal-content {
+            border-radius: 0.75rem;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+
+        .modal-footer {
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+        }
+
+        .bg-primary {
+            background-color: #2c5386 !important;
+        }
+
+        .bg-info {
+            background-color: #3b83f64b !important;
+        }
+
+        .text-transaction {
+            color: #3770e0 !important;
+        }
     </style>
     {% endblock %}
 </head>
@@ -276,198 +303,106 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for transaction in transacciones %}
                                 <tr>
-                                    <td>Dr. María González</td>
-                                    <td>1104567890</td>
-                                    <td>Depósito</td>
-                                    <td><span class="badge-aporte">Aporte</span></td>
-                                    <td class="amount-positive">$500</td>
-                                    <td>2024-01-15</td>
-                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>{{ transaction.wallet.user.get_full_name }}</td>
+                                    <td>{{ transaction.wallet.user.document_number }}</td>
+                                    <td>{{ transaction.get_transaction_type_display }}</td>
+                                    <td>
+                                        {% if transaction.transaction_type == 'SAVINGS_DEPOSIT' or transaction.transaction_type == 'SAVINGS_WITHDRAWAL' or transaction.transaction_type == 'SAVINGS_RETURN' %}
+                                        <span class="badge-aporte">Aporte</span>
+                                        {% else %}
+                                        <span class="badge-general">General</span>
+                                        {% endif %}
+                                    </td>
+                                    <td
+                                        class="{% if transaction.transaction_type == 'WITHDRAWAL' or transaction.transaction_type == 'TRANSFER_SENT' or transaction.transaction_type == 'SAVINGS_WITHDRAWAL' %}amount-negative{% elif transaction.transaction_type == 'CREDIT_PAYMENT' %}amount-neutral{% else %}amount-positive{% endif %}">
+                                        ${{ transaction.amount }}
+                                    </td>
+                                    <td>{{ transaction.created_at|date:"Y-m-d" }}</td>
+                                    <td>
+                                        <span
+                                            class="{% if transaction.status == 'COMPLETED' %}badge-completado{% elif transaction.status == 'PENDING' %}badge-pendiente{% elif transaction.status == 'CANCELLED' %}badge-general{% else %}badge-general{% endif %}">
+                                            {{ transaction.get_status_display }}
+                                        </span>
+                                    </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                            <!-- Botón ver con modal -->
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal"
+                                                data-bs-target="#transactionModal"
+                                                data-nombre="{{ transaction.wallet.user.get_full_name }}"
+                                                data-cedula="{{ transaction.wallet.user.document_number }}"
+                                                data-tipo="{{ transaction.get_transaction_type_display }}"
+                                                data-monto="${{ transaction.amount }}"
+                                                data-fecha="{{ transaction.created_at|date:'Y-m-d H:i' }}"
+                                                title="Ver detalles">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+                                            <!-- Botón editar opcional -->
                                             <button class="btn btn-action btn-edit" title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
+                                {% empty %}
                                 <tr>
-                                    <td>Ing. Carlos Pérez</td>
-                                    <td>1105678901</td>
-                                    <td>Retiro</td>
-                                    <td><span class="badge-general">General</span></td>
-                                    <td class="amount-negative">$200</td>
-                                    <td>2024-01-15</td>
-                                    <td><span class="badge-completado">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
+                                    <td colspan="8" class="text-center">No hay transacciones registradas.</td>
                                 </tr>
-                                <tr>
-                                    <td>Dra. Ana Rodríguez</td>
-                                    <td>1106789012</td>
-                                    <td>Crédito</td>
-                                    <td><span class="badge-general">General</span></td>
-                                    <td class="amount-neutral">$5000</td>
-                                    <td>2024-01-14</td>
-                                    <td><span class="badge-aprobado">Aprobado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Lic. Pedro Martín</td>
-                                    <td>1107890123</td>
-                                    <td>Depósito</td>
-                                    <td><span class="badge-aporte">Aporte</span></td>
-                                    <td class="amount-positive">$300</td>
-                                    <td>2024-01-14</td>
-                                    <td><span class="badge-completado">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Dr. Luis Herrera</td>
-                                    <td>1108901234</td>
-                                    <td>Depósito</td>
-                                    <td><span class="badge-general">General</span></td>
-                                    <td class="amount-positive">$1000</td>
-                                    <td>2024-01-13</td>
-                                    <td><span class="badge-completado">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Dra. Carmen Silva</td>
-                                    <td>1109012345</td>
-                                    <td>Retiro</td>
-                                    <td><span class="badge-general">General</span></td>
-                                    <td class="amount-negative">$150</td>
-                                    <td>2024-01-13</td>
-                                    <td><span class="badge-completado">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Ing. Roberto Vega</td>
-                                    <td>1110123456</td>
-                                    <td>Depósito</td>
-                                    <td><span class="badge-aporte">Aporte</span></td>
-                                    <td class="amount-positive">$450</td>
-                                    <td>2024-01-12</td>
-                                    <td><span class="badge-completado">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Lic. Sofía Torres</td>
-                                    <td>1111234567</td>
-                                    <td>Crédito</td>
-                                    <td><span class="badge-general">General</span></td>
-                                    <td class="amount-neutral">$3500</td>
-                                    <td>2024-01-12</td>
-                                    <td><span class="badge-pendiente">Pendiente</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Dr. Miguel Castillo</td>
-                                    <td>1112345678</td>
-                                    <td>Depósito</td>
-                                    <td><span class="badge-general">General</span></td>
-                                    <td class="amount-positive">$800</td>
-                                    <td>2024-01-11</td>
-                                    <td><span class="badge-completado">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Dra. Elena Morales</td>
-                                    <td>1113456789</td>
-                                    <td>Depósito</td>
-                                    <td><span class="badge-aporte">Aporte</span></td>
-                                    <td class="amount-positive">$350</td>
-                                    <td>2024-01-11</td>
-                                    <td><span class="badge-completado">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-action btn-view" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-edit" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Modal Detalle de Transacción -->
+                    <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content shadow-sm border-0">
+                                <div class="modal-header bg-gradient bg-primary text-white">
+                                    <h5 class="modal-title fw-semibold" id="transactionModalLabel">
+                                        Detalle de la Transacción
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body px-4 py-3">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-1 text-muted">Socio:</p>
+                                            <h6 class="fw-semibold" id="modalNombre">—</h6>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1 text-muted">Cédula:</p>
+                                            <h6 class="fw-semibold" id="modalCedula">—</h6>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-1 text-muted">Tipo de Transacción:</p>
+                                            <span class="badge bg-info text-transaction" id="modalTipo">—</span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1 text-muted">Fecha:</p>
+                                            <h6 class="fw-semibold" id="modalFecha">—</h6>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 text-center">
+                                            <p class="mb-1 text-muted">Monto:</p>
+                                            <h2 class="fw-bold text-success" id="modalMonto">$</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer bg-light border-top-0">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -510,13 +445,15 @@
             });
         });
 
-        // Funcionalidad de botones de acción
-        document.querySelectorAll('.btn-view').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                const row = e.target.closest('tr');
-                const socio = row.cells[0].textContent;
-                alert(`Ver detalles de: ${socio}`);
-            });
+        const modal = document.getElementById('transactionModal');
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            document.getElementById('modalNombre').textContent = button.getAttribute('data-nombre');
+            document.getElementById('modalCedula').textContent = button.getAttribute('data-cedula');
+            document.getElementById('modalTipo').textContent = button.getAttribute('data-tipo');
+            document.getElementById('modalMonto').textContent = button.getAttribute('data-monto');
+            document.getElementById('modalFecha').textContent = button.getAttribute('data-fecha');
         });
 
         document.querySelectorAll('.btn-edit').forEach(btn => {

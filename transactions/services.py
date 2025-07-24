@@ -78,7 +78,7 @@ class TransactionService:
             # Transacción del emisor
             sender_transaction = Transaction.objects.create(
                 wallet=sender_wallet,
-                transaction_type="TRANSFER",
+                transaction_type="Crédito generado",
                 amount=-amount,
                 description=f"{description} enviada a {recipient_wallet.user.email}",
                 reference_number=reference,

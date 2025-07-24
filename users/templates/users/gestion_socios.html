@@ -210,6 +210,10 @@
             margin-bottom: 1rem;
             color: #cbd5e0;
         }
+
+        .text-primary {
+            color: #325c8f !important;
+        }
     </style>
     {% endblock %}
 </head>
@@ -260,7 +264,6 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Cédula</th>
-                                    <th>Facultad</th>
                                     <th>Estado</th>
                                     <th>Saldo</th>
                                     <th>Acciones</th>
@@ -271,7 +274,6 @@
                                 <tr>
                                     <td>{{ socio.first_name }} {{ socio.last_name }}</td>
                                     <td>{{ socio.document_number }}</td>
-                                    <td>{{ socio.preferred_language|default:"—" }}</td> Nose
                                     <td>
                                         {% if socio.is_active %}
                                         <span class="badge-activo">Activo</span>
@@ -279,13 +281,20 @@
                                         <span class="badge-inactivo">Inactivo</span>
                                         {% endif %}
                                     </td>
-                                    <td class="saldo-amount">${{ socio.account_balance }}</td>
+                                    <td class="saldo-amount">${{ socio.wallet.balance }}</td>
                                     <td>
                                         <div class="action-buttons">
                                             <button class="btn btn-action btn-view" title="Ver detalles"
-                                                onclick="viewSocio({{ socio.id }})">
+                                                data-bs-toggle="modal" data-bs-target="#viewSocioModal"
+                                                data-name="Dr. {{ socio.first_name }} {{ socio.last_name }}"
+                                                data-document="{{ socio.document_number }}"
+                                                data-status="{% if socio.is_active %}Activo{% else %}Inactivo{% endif %}"
+                                                data-email="{{ socio.email }}" data-phone="{{ socio.phone }}"
+                                                data-balance="${{ socio.wallet.balance }}"
+                                                data-date="{{ socio.date_joined|date:'Y-m-d' }}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+
                                             <button class="btn btn-action btn-edit" title="Editar"
                                                 onclick="editSocio({{ socio.id }})">
                                                 <i class="fas fa-edit"></i>
@@ -331,6 +340,39 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="button" class="btn btn-danger" id="confirmDelete">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="viewSocioModal" tabindex="-1" aria-labelledby="viewSocioModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow rounded-3">
+                    <div class="modal-header bg-white border-bottom-0">
+                        <h5 class="modal-title fw-semibold text-primary" id="viewSocioModalLabel">Detalles del Socio
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body px-4 pb-4 pt-0">
+                        <div class="row mb-2">
+                            <div class="col-6"><strong>Nombre</strong><br><span id="modalSocioName"></span></div>
+                            <div class="col-6"><strong>Cédula</strong><br><span id="modalSocioDocument"></span></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-6"><strong>Facultad</strong><br><span id="modalSocioFaculty"></span></div>
+                            <div class="col-6"><strong>Estado</strong><br><span id="modalSocioStatus"></span></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-6"><strong>Email</strong><br><span id="modalSocioEmail"></span></div>
+                            <div class="col-6"><strong>Teléfono</strong><br><span id="modalSocioPhone"></span></div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col-6"><strong class="text-black">Saldo Actual</strong><br><span
+                                    class="text-black" id="modalSocioBalance"></span></div>
+                            <div class="col-6"><strong>Fecha de Ingreso</strong><br><span id="modalSocioDate"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -491,6 +533,22 @@
                 }
             }, 5000);
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('viewSocioModal');
+            modal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+
+                document.getElementById('modalSocioName').textContent = button.getAttribute('data-name');
+                document.getElementById('modalSocioDocument').textContent = button.getAttribute('data-document');
+                document.getElementById('modalSocioFaculty').textContent = button.getAttribute('data-faculty');
+                document.getElementById('modalSocioStatus').textContent = button.getAttribute('data-status');
+                document.getElementById('modalSocioEmail').textContent = button.getAttribute('data-email');
+                document.getElementById('modalSocioPhone').textContent = button.getAttribute('data-phone');
+                document.getElementById('modalSocioBalance').textContent = button.getAttribute('data-balance');
+                document.getElementById('modalSocioDate').textContent = button.getAttribute('data-date');
+            });
+        });
     </script>
     {% endblock %}
 

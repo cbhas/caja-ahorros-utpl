@@ -169,13 +169,14 @@
             color: #d97706;
         }
 
-        .btn-view-all {
+        .btn-primary {
             background-color: var(--primary-blue);
-            color: white;
+            color: #fff;
             border: none;
             padding: 0.75rem 2rem;
             border-radius: 8px;
             font-weight: 500;
+            font-size: 17px;
             width: 100%;
             margin-top: 1rem;
         }
@@ -194,6 +195,7 @@
             font-weight: 500;
             width: 100%;
             margin-top: 1rem;
+            font-size: 17px;
         }
 
         .btn-manage:hover {
@@ -295,9 +297,9 @@
                     <div class="transaction-item">
                         <div>
                             <div class="transaction-user">
-                                {{ tx.wallet.user.get_full_name }}
+                                <br><b>Acreedor:</b> {{ tx.recipient.get_full_name }}
                                 {% if tx.recipient %}
-                                → {{ tx.recipient.get_full_name }}
+                                <br><b>Prestatario:</b> {{ tx.wallet.user.get_full_name }}
                                 {% endif %}
                             </div>
                             <div class="transaction-type">
@@ -312,8 +314,8 @@
                     {% empty %}
                     <p>No hay transacciones recientes.</p>
                     {% endfor %}
-
-                    <button class="btn-view-all">Ver todas las transacciones</button>
+                    <a href="{% url 'transaction_list_admin' %}" class="btn btn-primary btn-sm">Ver todas las
+                        transacciones</a>
                 </div>
             </div>
 
@@ -344,7 +346,7 @@
                     <p>No hay solicitudes en proceso.</p>
                     {% endfor %}
 
-                    <button class="btn-manage">Gestionar solicitudes</button>
+                    <a href="{% url 'admin_credits' %}" class="btn btn-manage btn-sm">Gestionar solicitudes</a>
                 </div>
             </div>
         </div>

@@ -20,19 +20,6 @@ class TransactionListView(LoginRequiredMixin, ListView):
         transactions = self.get_queryset()
 
         # Calcular ingresos totales (depósitos y transferencias recibidas)
-<<<<<<< Updated upstream
-        income = transactions.filter(
-            transaction_type__in=['DEPOSIT', 'TRANSFER','CREDIT_DEPOSIT'],
-            status='COMPLETED'
-        ).aggregate(total=Sum('amount'))['total'] or 0
-
-        # Calcular gastos totales (retiros y transferencias enviadas)
-        expenses = transactions.filter(
-            transaction_type__in=['WITHDRAWAL', 'TRANSFER', 'TICKET_PURCHASE','CREDIT_PAYMENT'],
-            status='COMPLETED'
-        ).aggregate(total=Sum('amount'))['total'] or 0
-
-=======
         income = (
             transactions.filter(
                 transaction_type__in=["DEPOSIT", "TRANSFER", "CREDIT_DEPOSIT"],
@@ -54,7 +41,6 @@ class TransactionListView(LoginRequiredMixin, ListView):
             ).aggregate(total=Sum("amount"))["total"]
             or 0
         )
->>>>>>> Stashed changes
 
         context["total_income"] = income
         context["total_expenses"] = expenses

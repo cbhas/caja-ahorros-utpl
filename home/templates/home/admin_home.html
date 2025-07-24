@@ -285,121 +285,33 @@
         </div>
 
         <div class="row">
-            <!-- Recent Transactions -->
+            <!-- Transacciones Recientes -->
             <div class="col-md-6">
                 <div class="section-card">
                     <div class="section-title">Transacciones Recientes</div>
                     <div class="section-subtitle">Últimas operaciones realizadas</div>
 
+                    {% for tx in transacciones_recientes %}
                     <div class="transaction-item">
                         <div>
-                            <div class="transaction-user">Dr. María González</div>
-                            <div class="transaction-type">Depósito</div>
+                            <div class="transaction-user">
+                                {{ tx.wallet.user.get_full_name }}
+                                {% if tx.recipient %}
+                                → {{ tx.recipient.get_full_name }}
+                                {% endif %}
+                            </div>
+                            <div class="transaction-type">
+                                {{ tx.get_transaction_type_display }}
+                            </div>
                         </div>
                         <div class="text-end">
-                            <div class="transaction-amount">$500</div>
-                            <div class="transaction-date">2024-01-15</div>
+                            <div class="transaction-amount">${{ tx.amount }}</div>
+                            <div class="transaction-date">{{ tx.created_at|date:"Y-m-d" }}</div>
                         </div>
                     </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Ing. Carlos Pérez</div>
-                            <div class="transaction-type">Retiro</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$200</div>
-                            <div class="transaction-date">2024-01-15</div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Dra. Ana Rodríguez</div>
-                            <div class="transaction-type">Crédito</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$5000</div>
-                            <div class="transaction-date">2024-01-14</div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Lic. Pedro Martín</div>
-                            <div class="transaction-type">Depósito</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$300</div>
-                            <div class="transaction-date">2024-01-14</div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Dr. Luis Herrera</div>
-                            <div class="transaction-type">Depósito</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$1000</div>
-                            <div class="transaction-date">2024-01-13</div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Dra. Carmen Silva</div>
-                            <div class="transaction-type">Retiro</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$150</div>
-                            <div class="transaction-date">2024-01-13</div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Ing. Roberto Vega</div>
-                            <div class="transaction-type">Depósito</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$450</div>
-                            <div class="transaction-date">2024-01-12</div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Lic. Sofía Torres</div>
-                            <div class="transaction-type">Crédito</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$3500</div>
-                            <div class="transaction-date">2024-01-12</div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Dr. Miguel Castillo</div>
-                            <div class="transaction-type">Depósito</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$800</div>
-                            <div class="transaction-date">2024-01-11</div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-item">
-                        <div>
-                            <div class="transaction-user">Dra. Elena Morales</div>
-                            <div class="transaction-type">Depósito</div>
-                        </div>
-                        <div class="text-end">
-                            <div class="transaction-amount">$350</div>
-                            <div class="transaction-date">2024-01-11</div>
-                        </div>
-                    </div>
+                    {% empty %}
+                    <p>No hay transacciones recientes.</p>
+                    {% endfor %}
 
                     <button class="btn-view-all">Ver todas las transacciones</button>
                 </div>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CADUTPL Admin{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    {% include 'menu_styles.html' %}
+
+    {% block extra_css %}
+    <style>
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: #2c5282;
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .btn-primary-custom {
+            background-color: #2c5282;
+            border-color: #2c5282;
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #2a4d7a;
+            border-color: #2a4d7a;
+        }
+
+        .socios-card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .socios-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .socios-title {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin: 0;
+        }
+
+        .socios-subtitle {
+            color: #718096;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .search-filter-section {
+            padding: 1rem 1.5rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            max-width: 300px;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            padding-left: 2.5rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .filter-dropdown {
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            padding: 0.5rem 2rem 0.5rem 0.75rem;
+            background-color: white;
+            color: #4a5568;
+            min-width: 120px;
+        }
+
+        .socios-table {
+            margin: 0;
+        }
+
+        .socios-table thead th {
+            background-color: #f8f9fa;
+            border: none;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 1rem 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .socios-table tbody td {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .socios-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .badge-activo {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-inactivo {
+            background-color: #fee2e2;
+            color: #dc2626;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .saldo-amount {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .saldo-negative {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            padding: 0.375rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            background-color: white;
+            color: #6b7280;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-action:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-action.btn-view:hover {
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .btn-action.btn-edit:hover {
+            color: #f59e0b;
+            border-color: #f59e0b;
+        }
+
+        .btn-action.btn-delete:hover {
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #718096;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e0;
+        }
+    </style>
+    {% endblock %}
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+
+    {% include 'tabs_menu.html' %}
+
+    <div class="container-fluid px-4 main-content">
+        {% block content %}
+        <div class="row">
+            <div class="col-12">
+                <!-- Header Section -->
+                <div class="section-header">
+                    <button class="btn btn-primary-custom" onclick="window.location.href=''">
+                        <i class="fas fa-plus me-2"></i>
+                        Nuevo Socio
+                    </button>
+                </div>
+
+                <!-- Socios Card -->
+                <div class="card socios-card">
+                    <!-- Card Header -->
+                    <div class="socios-header">
+                        <h3 class="socios-title">Lista de Socios</h3>
+                        <p class="socios-subtitle">Administra los socios de CADUTPL</p>
+                    </div>
+
+                    <!-- Search and Filter Section -->
+                    <div class="search-filter-section">
+                        <div class="search-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="form-control search-input" placeholder="Buscar socio..."
+                                id="searchInput">
+                        </div>
+                        <select class="form-select filter-dropdown" id="filterSelect">
+                            <option value="todos">Todos</option>
+                            <option value="activo">Activos</option>
+                            <option value="inactivo">Inactivos</option>
+                        </select>
+                    </div>
+
+                    <!-- Socios Table -->
+                    <div class="table-responsive">
+                        <table class="table socios-table" id="sociosTable">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Cédula</th>
+                                    <th>Facultad</th>
+                                    <th>Estado</th>
+                                    <th>Saldo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for socio in socios %}
+                                <tr>
+                                    <td>{{ socio.first_name }} {{ socio.last_name }}</td>
+                                    <td>{{ socio.document_number }}</td>
+                                    <td>{{ socio.preferred_language|default:"—" }}</td> Nose
+                                    <td>
+                                        {% if socio.is_active %}
+                                        <span class="badge-activo">Activo</span>
+                                        {% else %}
+                                        <span class="badge-inactivo">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="saldo-amount">${{ socio.account_balance }}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles"
+                                                onclick="viewSocio({{ socio.id }})">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar"
+                                                onclick="editSocio({{ socio.id }})">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-delete" title="Eliminar"
+                                                onclick="deleteSocio({{ socio.id }}, '{{ socio.get_full_name }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">No hay socios registrados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <!-- Estado vacío (se muestra cuando no hay resultados) -->
+                        <div class="empty-state d-none" id="emptyState">
+                            <i class="fas fa-users"></i>
+                            <h5>No se encontraron socios</h5>
+                            <p>No hay socios que coincidan con tu búsqueda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de confirmación para eliminar -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>¿Estás seguro de que deseas eliminar al socio <strong id="socioName"></strong>?</p>
+                        <p class="text-muted small">Esta acción no se puede deshacer.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    {% block export_function %}
+    // Función personalizada para exportar socios
+    window.open('', '_blank');
+    {% endblock %}
+
+    {% block extra_js %}
+    <script>
+        // Variables globales
+        let currentSocioId = null;
+        let allRows = [];
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function () {
+            // Guardar todas las filas para filtrar
+            allRows = Array.from(document.querySelectorAll('#sociosTable tbody tr'));
+
+            // Configurar eventos
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Funcionalidad de búsqueda
+            document.getElementById('searchInput').addEventListener('input', function (e) {
+                filterTable();
+            });
+
+            // Funcionalidad de filtro por estado
+            document.getElementById('filterSelect').addEventListener('change', function (e) {
+                filterTable();
+            });
+        }
+
+        function filterTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterValue = document.getElementById('filterSelect').value;
+            const tbody = document.querySelector('#sociosTable tbody');
+            const emptyState = document.getElementById('emptyState');
+
+            let visibleCount = 0;
+
+            allRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const estadoBadge = row.querySelector('.badge-activo, .badge-inactivo');
+                const estado = estadoBadge ? estadoBadge.textContent.toLowerCase() : '';
+
+                // Filtrar por búsqueda
+                const matchesSearch = text.includes(searchTerm);
+
+                // Filtrar por estado
+                let matchesFilter = true;
+                if (filterValue === 'activo') {
+                    matchesFilter = estado === 'activo';
+                } else if (filterValue === 'inactivo') {
+                    matchesFilter = estado === 'inactivo';
+                }
+
+                // Mostrar/ocultar fila
+                if (matchesSearch && matchesFilter) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Mostrar estado vacío si no hay resultados
+            if (visibleCount === 0) {
+                emptyState.classList.remove('d-none');
+            } else {
+                emptyState.classList.add('d-none');
+            }
+        }
+
+        // Funciones de acciones
+        function viewSocio(id) {
+            window.location.href = ``.replace('0', id);
+        }
+
+        function editSocio(id) {
+            window.location.href = ``.replace('0', id);
+        }
+
+        function deleteSocio(id, name) {
+            currentSocioId = id;
+            document.getElementById('socioName').textContent = name;
+
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+
+        // Confirmar eliminación
+        document.getElementById('confirmDelete').addEventListener('click', function () {
+            if (currentSocioId) {
+                // Aquí harías la petición AJAX para eliminar
+                fetch(``.replace('0', currentSocioId), {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '',
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remover la fila de la tabla
+                            const row = document.querySelector(`tr[data-id="${currentSocioId}"]`);
+                            if (row) {
+                                row.remove();
+                            }
+
+                            // Mostrar mensaje de éxito
+                            showNotification('Socio eliminado exitosamente', 'success');
+
+                            // Actualizar array de filas
+                            allRows = allRows.filter(row => row.getAttribute('data-id') != currentSocioId);
+                        } else {
+                            showNotification('Error al eliminar el socio: ' + data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showNotification('Error de conexión', 'error');
+                        console.error('Error:', error);
+                    });
+
+                // Cerrar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                modal.hide();
+                currentSocioId = null;
+            }
+        });
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type) {
+            // Crear notificación temporal
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+            alert.style.zIndex = '9999';
+            alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+            document.body.appendChild(alert);
+
+            // Auto-remover después de 5 segundos
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 5000);
+        }
+    </script>
+    {% endblock %}
+
+</body>
+
+</html>

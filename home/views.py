@@ -156,9 +156,11 @@ def validate_account(request):
 
 
 def admin_dashboard_view(request):
-    # Socios
-    total_socios = CustomUser.objects.count()
-    socios_verificados = CustomUser.objects.filter(is_verified=True).count()
+    # Socios (excluyendo staff)
+    total_socios = CustomUser.objects.filter(is_staff=False).count()
+    socios_verificados = CustomUser.objects.filter(
+        is_verified=True, is_staff=False
+    ).count()
 
     # Créditos
     credit_applications = Credit.objects.filter(
@@ -184,14 +186,22 @@ def admin_dashboard_view(request):
         or 0
     )
 
-    # Suma de saldo general (usuarios activos con wallet)
+    # Suma del saldo total de usuarios activos NO staff
     total_saldo_general = (
-        Wallet.objects.filter(user__is_active=True).aggregate(total=Sum("balance"))[
-            "total"
-        ]
+        Wallet.objects.filter(user__is_active=True, user__is_staff=False).aggregate(
+            total=Sum("balance")
+        )["total"]
         or 0
     )
 
+    # Últimas 10 transacciones de usuarios normales (no staff)
+    transacciones_recientes = (
+        Transaction.objects
+        .filter(wallet__user__is_staff=False)
+        .select_related("wallet__user")
+        .order_by("-created_at")[:10]
+    )
+    
     context = {
         "total_socios": total_socios,
         "socios_verificados": socios_verificados,
@@ -203,6 +213,7 @@ def admin_dashboard_view(request):
         "total_monto_creditos_activos": total_monto_creditos_activos,
         "total_approved_credits": total_approved_credits,
         "total_saldo_general": total_saldo_general,
+        "transacciones_recientes": transacciones_recientes,
     }
 
     return render(request, "home/admin_home.html", context)

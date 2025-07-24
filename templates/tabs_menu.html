@@ -8,15 +8,15 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {% if 'socios' in request.resolver_match.url_name %}active{% endif %}" href="">
+            <a class="nav-link {% if 'socio_list' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'socio_list' %}">
                 <i class="fas fa-users me-2"></i>Socios
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link {% if 'transacciones' in request.resolver_match.url_name %}active{% endif %}" href="">
-                <i class="fas fa-exchange-alt me-2"></i>Transacciones
-            </a>
-        </li>
+        <a class="nav-link {% if request.resolver_match.url_name == 'transaction_list_admin' %}active{% endif %}"
+            href="{% url 'transaction_list_admin' %}">
+            <i class="fas fa-exchange-alt me-2"></i>Transacciones
+        </a>
         <li class="nav-item">
             <a class="nav-link {% if 'ahorros' in request.resolver_match.url_name %}active{% endif %}" href="">
                 <i class="fas fa-piggy-bank me-2"></i>Ahorros
@@ -28,7 +28,6 @@
                 <i class="fas fa-credit-card me-2"></i> Créditos
             </a>
         </li>
-
         <li class="nav-item">
             <a class="nav-link {% if 'reportes' in request.resolver_match.url_name %}active{% endif %}" href="">
                 <i class="fas fa-chart-bar me-2"></i>Reportes

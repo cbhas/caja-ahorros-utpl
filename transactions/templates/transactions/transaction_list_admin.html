@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CADUTPL Admin{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    {% include 'menu_styles.html' %}
+
+    {% block extra_css %}
+    <style>
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: #2c5282;
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .btn-primary-custom {
+            background-color: #2c5282;
+            border-color: #2c5282;
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #2a4d7a;
+            border-color: #2a4d7a;
+        }
+
+        .transactions-card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .transactions-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .transactions-title {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin: 0;
+        }
+
+        .transactions-subtitle {
+            color: #718096;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .search-filter-section {
+            padding: 1rem 1.5rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            max-width: 300px;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            padding-left: 2.5rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .filter-dropdown {
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            padding: 0.5rem 2rem 0.5rem 0.75rem;
+            background-color: white;
+            color: #4a5568;
+            min-width: 120px;
+        }
+
+        .transactions-table {
+            margin: 0;
+        }
+
+        .transactions-table thead th {
+            background-color: #f8f9fa;
+            border: none;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 1rem 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .transactions-table tbody td {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .transactions-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .badge-aporte {
+            background-color: #fed7aa;
+            color: #c2410c;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-general {
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-completado {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-aprobado {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-pendiente {
+            background-color: #fef3c7;
+            color: #d97706;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .amount-positive {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .amount-negative {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .amount-neutral {
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            padding: 0.375rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            background-color: white;
+            color: #6b7280;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-action:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-action.btn-view:hover {
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .btn-action.btn-edit:hover {
+            color: #f59e0b;
+            border-color: #f59e0b;
+        }
+    </style>
+    {% endblock %}
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+
+    {% include 'tabs_menu.html' %}
+
+    <div class="container-fluid px-4 main-content">
+        {% block content %}
+        <div class="row">
+            <div class="col-12">
+                <!-- Transactions Card -->
+                <div class="card transactions-card">
+                    <!-- Card Header -->
+                    <div class="transactions-header">
+                        <h3 class="transactions-title">Historial de Transacciones</h3>
+                        <p class="transactions-subtitle">Registro completo de todas las operaciones</p>
+                    </div>
+
+                    <!-- Search and Filter Section -->
+                    <div class="search-filter-section">
+                        <div class="search-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="form-control search-input" placeholder="Buscar transacción...">
+                        </div>
+                        <select class="form-select filter-dropdown">
+                            <option selected>Todas las...</option>
+                            <option value="deposito">Depósitos</option>
+                            <option value="retiro">Retiros</option>
+                            <option value="credito">Créditos</option>
+                        </select>
+                    </div>
+
+                    <!-- Transactions Table -->
+                    <div class="table-responsive">
+                        <table class="table transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Socio</th>
+                                    <th>Cédula</th>
+                                    <th>Tipo</th>
+                                    <th>Categoría</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Dr. María González</td>
+                                    <td>1104567890</td>
+                                    <td>Depósito</td>
+                                    <td><span class="badge-aporte">Aporte</span></td>
+                                    <td class="amount-positive">$500</td>
+                                    <td>2024-01-15</td>
+                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ing. Carlos Pérez</td>
+                                    <td>1105678901</td>
+                                    <td>Retiro</td>
+                                    <td><span class="badge-general">General</span></td>
+                                    <td class="amount-negative">$200</td>
+                                    <td>2024-01-15</td>
+                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Dra. Ana Rodríguez</td>
+                                    <td>1106789012</td>
+                                    <td>Crédito</td>
+                                    <td><span class="badge-general">General</span></td>
+                                    <td class="amount-neutral">$5000</td>
+                                    <td>2024-01-14</td>
+                                    <td><span class="badge-aprobado">Aprobado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Lic. Pedro Martín</td>
+                                    <td>1107890123</td>
+                                    <td>Depósito</td>
+                                    <td><span class="badge-aporte">Aporte</span></td>
+                                    <td class="amount-positive">$300</td>
+                                    <td>2024-01-14</td>
+                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Dr. Luis Herrera</td>
+                                    <td>1108901234</td>
+                                    <td>Depósito</td>
+                                    <td><span class="badge-general">General</span></td>
+                                    <td class="amount-positive">$1000</td>
+                                    <td>2024-01-13</td>
+                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Dra. Carmen Silva</td>
+                                    <td>1109012345</td>
+                                    <td>Retiro</td>
+                                    <td><span class="badge-general">General</span></td>
+                                    <td class="amount-negative">$150</td>
+                                    <td>2024-01-13</td>
+                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ing. Roberto Vega</td>
+                                    <td>1110123456</td>
+                                    <td>Depósito</td>
+                                    <td><span class="badge-aporte">Aporte</span></td>
+                                    <td class="amount-positive">$450</td>
+                                    <td>2024-01-12</td>
+                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Lic. Sofía Torres</td>
+                                    <td>1111234567</td>
+                                    <td>Crédito</td>
+                                    <td><span class="badge-general">General</span></td>
+                                    <td class="amount-neutral">$3500</td>
+                                    <td>2024-01-12</td>
+                                    <td><span class="badge-pendiente">Pendiente</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Dr. Miguel Castillo</td>
+                                    <td>1112345678</td>
+                                    <td>Depósito</td>
+                                    <td><span class="badge-general">General</span></td>
+                                    <td class="amount-positive">$800</td>
+                                    <td>2024-01-11</td>
+                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Dra. Elena Morales</td>
+                                    <td>1113456789</td>
+                                    <td>Depósito</td>
+                                    <td><span class="badge-aporte">Aporte</span></td>
+                                    <td class="amount-positive">$350</td>
+                                    <td>2024-01-11</td>
+                                    <td><span class="badge-completado">Completado</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-action btn-view" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    {% block export_function %}
+    // Función personalizada para exportar transacciones
+    window.open('/admin/transacciones/export/', '_blank');
+    {% endblock %}
+
+    {% block extra_js %}
+    <script>
+        // Funcionalidad de búsqueda
+        document.querySelector('.search-input').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.transactions-table tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Funcionalidad de filtro
+        document.querySelector('.filter-dropdown').addEventListener('change', function (e) {
+            const filterValue = e.target.value;
+            const rows = document.querySelectorAll('.transactions-table tbody tr');
+
+            rows.forEach(row => {
+                if (filterValue === 'Todas las...') {
+                    row.style.display = '';
+                } else {
+                    const tipo = row.cells[2].textContent.toLowerCase();
+                    row.style.display = tipo.includes(filterValue) ? '' : 'none';
+                }
+            });
+        });
+
+        // Funcionalidad de botones de acción
+        document.querySelectorAll('.btn-view').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                const row = e.target.closest('tr');
+                const socio = row.cells[0].textContent;
+                alert(`Ver detalles de: ${socio}`);
+            });
+        });
+
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                const row = e.target.closest('tr');
+                const socio = row.cells[0].textContent;
+                alert(`Editar transacción de: ${socio}`);
+            });
+        });
+    </script>
+    {% endblock %}
+</body>
+
+</html>

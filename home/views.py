@@ -27,7 +27,7 @@ def dashboard_view(request):
             wallet=current_balance, created_at__date=today
         )
         daily_income = (
-            daily_transactions.filter(transaction_type__in=["DEPOSIT"]).aggregate(
+            daily_transactions.filter(transaction_type__in=["DEPOSIT","CREDIT_DEPOSIT"]).aggregate(
                 total=Sum("amount")
             )["total"]
             or 0

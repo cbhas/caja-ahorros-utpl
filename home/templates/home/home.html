@@ -98,8 +98,8 @@
                             </td>
                             <td>{{ transaction.description }}</td>
                             <td
-                                class="{% if transaction.transaction_type == 'DEPOSIT' %}text-success{% else %}text-danger{% endif %}">
-                                {% if transaction.transaction_type == 'DEPOSIT' %}+{% else %}-{% endif %}
+                                class="{% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT'  %}text-success{% else %}text-danger{% endif %}">
+                                    {% if transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'DEPOSIT' %}+{% else %}-{% endif %}
                                 ${{ transaction.amount|floatformat:2 }}
                             </td>
                             <td class="text-muted">{{ transaction.created_at|date:"Y-m-d" }}</td>

@@ -24,6 +24,12 @@ def credit_approve(request, credit_id):
 
     return redirect('admin_credit_review', credit_id=credit_request.id)
 
+def credit_reject(request, credit_id):
+    credit_request = get_object_or_404(Credit, id=credit_id)
+    credit_request.status = 'rejected'
+    credit_request.save()
+    return redirect('admin_credit_review', credit_id=credit_request.id)
+
 @login_required
 def credit_request(request):
     wallet = get_object_or_404(Wallet, user=request.user)

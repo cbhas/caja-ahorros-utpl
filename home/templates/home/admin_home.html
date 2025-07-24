@@ -1,10 +1,455 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CADUTPL Admin{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    {% include 'menu_styles.html' %}
+
+    {% block extra_css %}
+    <style>
+        :root {
+            --primary-blue: #1e3a8a;
+            --light-blue: #3b82f6;
+            --yellow: #fbbf24;
+            --green: #10b981;
+            --gray-light: #f8fafc;
+            --gray-medium: #64748b;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid;
+            height: 100%;
+        }
+
+        .metric-card.users {
+            border-left-color: var(--light-blue);
+        }
+
+        .metric-card.savings {
+            border-left-color: var(--yellow);
+        }
+
+        .metric-card.credits {
+            border-left-color: var(--light-blue);
+        }
+
+        .metric-card.amount {
+            border-left-color: var(--yellow);
+        }
+
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .metric-icon.users {
+            background-color: var(--light-blue);
+        }
+
+        .metric-icon.savings {
+            background-color: var(--yellow);
+        }
+
+        .metric-icon.credits {
+            background-color: var(--light-blue);
+        }
+
+        .metric-icon.amount {
+            background-color: var(--yellow);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .metric-change {
+            font-size: 0.8rem;
+            color: var(--gray-medium);
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-user {
+            font-weight: 500;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .transaction-type {
+            color: var(--gray-medium);
+            font-size: 0.85rem;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .transaction-date {
+            color: var(--gray-medium);
+            font-size: 0.8rem;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-approved {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-review {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .btn-view-all {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-view-all:hover {
+            background-color: #1e40af;
+            color: white;
+        }
+
+        .btn-manage {
+            background-color: var(--yellow);
+            color: #1e293b;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-manage:hover {
+            background-color: #f59e0b;
+            color: #1e293b;
+        }
+
+        .credit-application {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .credit-application:last-child {
+            border-bottom: none;
+        }
+
+        .credit-user {
+            font-weight: 500;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .credit-type {
+            color: var(--gray-medium);
+            font-size: 0.85rem;
+        }
+
+        .credit-amount {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+    </style>
+    {% endblock %}
 </head>
+
 <body>
-<h1>Admin Home</h1>
+    {% include 'navbar.html' %}
+
+    {% include 'tabs_menu.html' %}
+
+    <div class="container-fluid px-4 main-content">
+        {% block content %}
+        <!-- Metrics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="metric-card users">
+                    <div class="metric-icon users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-value">{{ total_socios }}</div>
+                    <div class="metric-label">Total Socios</div>
+                    <div class="metric-change">+12 este mes</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card savings">
+                    <div class="metric-icon savings">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="metric-value">{{ total_saldo_general }}</div>
+                    <div class="metric-label">Total Ahorros</div>
+                    <div class="metric-change">+8.2% desde el mes pasado</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card credits">
+                    <div class="metric-icon credits">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="metric-value">{{ total_active_credits }}</div>
+                    <div class="metric-label">Créditos Activos</div>
+                    <div class="metric-change">{{ total_pending_credits }} pendientes de aprobación</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card amount">
+                    <div class="metric-icon amount">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="metric-value">${{ total_approved_credits }}</div>
+                    <div class="metric-label">Monto Créditos</div>
+                    <div class="metric-change">Cartera total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Transactions -->
+            <div class="col-md-6">
+                <div class="section-card">
+                    <div class="section-title">Transacciones Recientes</div>
+                    <div class="section-subtitle">Últimas operaciones realizadas</div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Dr. María González</div>
+                            <div class="transaction-type">Depósito</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$500</div>
+                            <div class="transaction-date">2024-01-15</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Ing. Carlos Pérez</div>
+                            <div class="transaction-type">Retiro</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$200</div>
+                            <div class="transaction-date">2024-01-15</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Dra. Ana Rodríguez</div>
+                            <div class="transaction-type">Crédito</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$5000</div>
+                            <div class="transaction-date">2024-01-14</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Lic. Pedro Martín</div>
+                            <div class="transaction-type">Depósito</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$300</div>
+                            <div class="transaction-date">2024-01-14</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Dr. Luis Herrera</div>
+                            <div class="transaction-type">Depósito</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$1000</div>
+                            <div class="transaction-date">2024-01-13</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Dra. Carmen Silva</div>
+                            <div class="transaction-type">Retiro</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$150</div>
+                            <div class="transaction-date">2024-01-13</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Ing. Roberto Vega</div>
+                            <div class="transaction-type">Depósito</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$450</div>
+                            <div class="transaction-date">2024-01-12</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Lic. Sofía Torres</div>
+                            <div class="transaction-type">Crédito</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$3500</div>
+                            <div class="transaction-date">2024-01-12</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Dr. Miguel Castillo</div>
+                            <div class="transaction-type">Depósito</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$800</div>
+                            <div class="transaction-date">2024-01-11</div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item">
+                        <div>
+                            <div class="transaction-user">Dra. Elena Morales</div>
+                            <div class="transaction-type">Depósito</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="transaction-amount">$350</div>
+                            <div class="transaction-date">2024-01-11</div>
+                        </div>
+                    </div>
+
+                    <button class="btn-view-all">Ver todas las transacciones</button>
+                </div>
+            </div>
+
+            <!-- Credit Applications -->
+            <div class="col-md-6">
+                <div class="section-card">
+                    <div class="section-title">Solicitudes de Crédito</div>
+                    <div class="section-subtitle">Créditos en proceso de revisión</div>
+
+                    {% for credit in credit_applications %}
+                    <div class="credit-application">
+                        <div>
+                            <div class="credit-user">{{ credit.wallet.user.get_full_name }}</div>
+                            <div class="credit-type">{{ credit.purpose }}</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="credit-amount">${{ credit.amount }}</div>
+                            <span class="status-badge 
+                    {% if credit.status == 'pending' %}status-pending
+                    {% elif credit.status == 'approved' %}status-approved
+                    {% elif credit.status == 'rejected' %}status-rejected
+                    {% else %}status-review{% endif %}">
+                                {{ credit.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No hay solicitudes en proceso.</p>
+                    {% endfor %}
+
+                    <button class="btn-manage">Gestionar solicitudes</button>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function exportData() {
+            {% block export_function %}
+            alert('Funcionalidad de exportar - Implementar según la vista actual');
+            {% endblock %}
+        }
+
+        {% block extra_js %} {% endblock %}
+    </script>
 </body>
+
 </html>

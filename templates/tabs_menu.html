@@ -1,0 +1,43 @@
+<!-- tabs_menu.html -->
+<div class="container-fluid px-4 py-3">
+    <ul class="nav nav-tabs nav-tabs-custom">
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'admin_home' or request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                href="{% url 'admin_home' %}">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'socios' in request.resolver_match.url_name %}active{% endif %}" href="">
+                <i class="fas fa-users me-2"></i>Socios
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'transacciones' in request.resolver_match.url_name %}active{% endif %}" href="">
+                <i class="fas fa-exchange-alt me-2"></i>Transacciones
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'ahorros' in request.resolver_match.url_name %}active{% endif %}" href="">
+                <i class="fas fa-piggy-bank me-2"></i>Ahorros
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'admin_credits' %}active{% endif %}"
+                href="{% url 'admin_credits' %}">
+                <i class="fas fa-credit-card me-2"></i> Créditos
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link {% if 'reportes' in request.resolver_match.url_name %}active{% endif %}" href="">
+                <i class="fas fa-chart-bar me-2"></i>Reportes
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'config' in request.resolver_match.url_name %}active{% endif %}" href="">
+                <i class="fas fa-cogs me-2"></i>Configuración
+            </a>
+        </li>
+    </ul>
+</div>

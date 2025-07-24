@@ -6,7 +6,6 @@ class Credit(models.Model):
         ('pending', 'Pendiente'),
         ('approved', 'Aprobado'),
         ('rejected', 'Rechazado'),
-        ('active', 'Activo'),
         ('paid', 'Pagado'),
         ('defaulted', 'Incumplido'),
     )

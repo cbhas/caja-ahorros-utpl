@@ -1,0 +1,29 @@
+<!-- navbar.html -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="{% url 'admin_home' %}">
+            <i class="fas fa-university me-2"></i>
+            CADUTPL Admin
+        </a>
+        <div class="navbar-text text-muted">
+            Caja de Ahorro Docente UTPL
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="btn export-btn me-3" onclick="exportData()">
+                <i class="fas fa-download me-2"></i>
+                Exportar
+            </button>
+            <div class="dropdown">
+                <button class="btn btn-link text-muted" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle fs-4"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -15,9 +15,6 @@ from django.http import JsonResponse
 
 @login_required
 def dashboard_view(request):
-    if request.user.is_authenticated and request.user.is_staff:
-        return redirect('admin_home')
-
     news = New.objects.all().order_by("-date")[:2]
 
     user = request.user
@@ -29,7 +26,7 @@ def dashboard_view(request):
             wallet=current_balance, created_at__date=today
         )
         daily_income = (
-                daily_transactions.filter(transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT"]).aggregate(
+                daily_transactions.filter(transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT","APORT"]).aggregate(
                     total=Sum("amount")
                 )["total"]
                 or 0
@@ -40,6 +37,20 @@ def dashboard_view(request):
                 ).aggregate(total=Sum("amount"))["total"]
                 or 0
         )
+        transactions = Transaction.objects.filter(wallet=current_balance)
+        income = (
+                transactions.filter(transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT","APORT"]).aggregate(
+                    total=Sum("amount")
+                )["total"]
+                or 0
+        )
+        expenses = (
+                daily_transactions.filter(
+                    transaction_type__in=["WITHDRAWAL", "TRANSFER", "TICKET_PURCHASE"]
+                ).aggregate(total=Sum("amount"))["total"]
+                or 0
+        )
+        balance = income - expenses
 
         recent_transactions = Transaction.objects.filter(
             wallet=current_balance
@@ -121,6 +132,7 @@ def dashboard_view(request):
         "form": form,
         "recent_transactions": recent_transactions,
         "news": news,
+        "balance": balance,
     }
 
     return render(request, "home/home.html", context)

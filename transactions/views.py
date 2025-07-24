@@ -22,7 +22,7 @@ class TransactionListView(LoginRequiredMixin, ListView):
         # Calcular ingresos totales (depósitos y transferencias recibidas)
         income = (
             transactions.filter(
-                transaction_type__in=["DEPOSIT", "TRANSFER", "CREDIT_DEPOSIT"],
+                transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT","APORT"],
                 status="COMPLETED",
             ).aggregate(total=Sum("amount"))["total"]
             or 0

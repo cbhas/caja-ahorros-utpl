@@ -9,12 +9,12 @@
         <h5 class="text-muted mb-3" style="font-size: 28px">Hola, <b>{{ client.first_name }}</b></h5>
         <div class="balance-card p-4" style="background-color: #004370; color: white; border-radius: 15px">
             <small class="d-block mb-2" style="font-size: 20px">Tu balance actual</small>
-            <h2 class="mb-2" style="font-size: 44px">${{ current_balance.balance|floatformat:2 }}</h2>
+            <h2 class="mb-2" style="font-size: 44px">${{ balance|floatformat:2 }}</h2>
             <div class="d-flex justify-content-between">
                 <span style="font-size: 20px"><i class="bi bi-arrow-up" style="font-size: 17px"></i> <b>Ingresos:</b>
-                    ${{ daily_income }}</span>
+                    ${{ daily_income|floatformat:2  }}</span>
                 <span style="font-size: 20px"><i class="bi bi-arrow-down" style="font-size: 17px"></i> <b>Gastos:</b>
-                    ${{ daily_expenses }}</span>
+                    ${{ daily_expenses|floatformat:2  }}</span>
             </div>
         </div>
     </div>
@@ -90,7 +90,7 @@
                         {% for transaction in recent_transactions %}
                         <tr>
                             <td>
-                                {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT' %}
+                                {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'APORT'%}
                                 <b>Recibido de:</b> {{transaction.recipient.get_full_name }}
                                 {% else %}
                                 <b>Enviado a:</b> {{ transaction.recipient.get_full_name }}
@@ -98,8 +98,8 @@
                             </td>
                             <td>{{ transaction.description }}</td>
                             <td
-                                class="{% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT'  %}text-success{% else %}text-danger{% endif %}">
-                                {% if transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'DEPOSIT' %}+{% else %}-{% endif %}
+                                class="{% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'APORT'%}text-success{% else %}text-danger{% endif %}">
+                                {% if transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'APORT' %}+{% else %}-{% endif %}
                                 ${{ transaction.amount|floatformat:2 }}
                             </td>
                             <td class="text-muted">{{ transaction.created_at|date:"Y-m-d" }}</td>

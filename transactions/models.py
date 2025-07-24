@@ -17,6 +17,7 @@ class Transaction(models.Model):
         ("SAVINGS_DEPOSIT", "Depósito a objetivo de ahorro"),
         ("SAVINGS_WITHDRAWAL", "Retiro de objetivo de ahorro"),
         ("SAVINGS_RETURN", "Devolución de fondos de objetivo"),
+        ("APORT","Aporte")
     ]
 
     STATUS_CHOICES = [

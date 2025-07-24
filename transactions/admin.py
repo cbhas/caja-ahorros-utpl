@@ -1,8 +1,9 @@
 from django.contrib import admin
 from .models import Transaction
+from import_export.admin import ImportExportModelAdmin
 
 @admin.register(Transaction)
-class TransactionAdmin(admin.ModelAdmin):
+class TransactionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = (
         'reference_number',
         'transaction_type',

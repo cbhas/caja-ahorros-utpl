@@ -315,10 +315,16 @@
                                         <span class="badge-general">General</span>
                                         {% endif %}
                                     </td>
-                                    <td
-                                        class="{% if transaction.transaction_type == 'WITHDRAWAL' or transaction.transaction_type == 'TRANSFER_SENT' or transaction.transaction_type == 'SAVINGS_WITHDRAWAL' %}amount-negative{% elif transaction.transaction_type == 'CREDIT_PAYMENT' %}amount-neutral{% else %}amount-positive{% endif %}">
-                                        ${{ transaction.amount }}
+                                    <td class="{% if transaction.transaction_type == 'WITHDRAWAL' or transaction.transaction_type == 'TRANSFER_SENT' or transaction.transaction_type == 'SAVINGS_WITHDRAWAL' %}amount-negative{% elif transaction.transaction_type == 'CREDIT_PAYMENT' %}amount-neutral{% else %}amount-positive{% endif %}">
+                                        {% with transaction.amount|floatformat:2 as amount %}
+                                            {% if transaction.amount < 0 %}
+                                                -${{ amount|stringformat:"s"|slice:"1:" }}
+                                            {% else %}
+                                                ${{ amount }}
+                                            {% endif %}
+                                        {% endwith %}
                                     </td>
+
                                     <td>{{ transaction.created_at|date:"Y-m-d" }}</td>
                                     <td>
                                         <span
@@ -334,11 +340,13 @@
                                                 data-nombre="{{ transaction.wallet.user.get_full_name }}"
                                                 data-cedula="{{ transaction.wallet.user.document_number }}"
                                                 data-tipo="{{ transaction.get_transaction_type_display }}"
-                                                data-monto="${{ transaction.amount }}"
+                                                data-tipo-codigo="{{ transaction.transaction_type }}"
+                                                data-monto="{{ transaction.amount }}"
                                                 data-fecha="{{ transaction.created_at|date:'Y-m-d H:i' }}"
                                                 title="Ver detalles">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+
                                             <!-- Botón editar opcional -->
                                             <button class="btn btn-action btn-edit" title="Editar">
                                                 <i class="fas fa-edit"></i>
@@ -452,7 +460,32 @@
             document.getElementById('modalNombre').textContent = button.getAttribute('data-nombre');
             document.getElementById('modalCedula').textContent = button.getAttribute('data-cedula');
             document.getElementById('modalTipo').textContent = button.getAttribute('data-tipo');
-            document.getElementById('modalMonto').textContent = button.getAttribute('data-monto');
+            const monto = button.getAttribute('data-monto');
+            const tipo = button.getAttribute('data-tipo-codigo');
+
+            const montoEl = document.getElementById('modalMonto');
+            let montoNumber = parseFloat(monto);
+            let signo = montoNumber >= 0 ? '+' : '-';
+            let valorFormateado = Math.abs(montoNumber).toLocaleString('es-EC', { minimumFractionDigits: 2 });
+            montoEl.textContent = `${signo} $${valorFormateado}`;
+
+            montoEl.classList.remove('text-success', 'text-danger', 'text-black');
+            if (['DEPOSIT', 'CREDIT_DEPOSIT', 'SAVINGS_DEPOSIT'].includes(tipo)) {
+                montoEl.classList.add('text-success');
+            } else if (['WITHDRAWAL', 'TRANSFER_SENT', 'SAVINGS_WITHDRAWAL'].includes(tipo)) {
+                montoEl.classList.add('text-danger');
+            } else {
+                montoEl.classList.add('text-black');
+            }
+
+
+            if (['DEPOSIT', 'CREDIT_DEPOSIT', 'SAVINGS_DEPOSIT'].includes(tipo)) {
+                montoEl.classList.add('text-success');
+            } else if (['WITHDRAWAL', 'TRANSFER_SENT', 'SAVINGS_WITHDRAWAL'].includes(tipo)) {
+                montoEl.classList.add('text-danger');
+            } else {
+                montoEl.classList.add('text-black');
+            }
             document.getElementById('modalFecha').textContent = button.getAttribute('data-fecha');
         });
 

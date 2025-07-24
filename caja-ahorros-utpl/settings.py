@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'news',
     'credits',
     'savings_goals',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

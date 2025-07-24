@@ -90,16 +90,16 @@
                         {% for transaction in recent_transactions %}
                         <tr>
                             <td>
-                                {% if transaction.transaction_type == 'TRANSFER' %}
-                                <b>Enviado a:</b> {{ transaction.recipient.get_full_name }}
+                                {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT' %}
+                                <b>Recibido de:</b> {{transaction.recipient.get_full_name }}
                                 {% else %}
-                                <b>Recibido de:</b> {{ transaction.wallet.user.get_full_name }}
+                                <b>Enviado a:</b> {{ transaction.recipient.get_full_name }}
                                 {% endif %}
                             </td>
                             <td>{{ transaction.description }}</td>
                             <td
                                 class="{% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT'  %}text-success{% else %}text-danger{% endif %}">
-                                    {% if transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'DEPOSIT' %}+{% else %}-{% endif %}
+                                {% if transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'DEPOSIT' %}+{% else %}-{% endif %}
                                 ${{ transaction.amount|floatformat:2 }}
                             </td>
                             <td class="text-muted">{{ transaction.created_at|date:"Y-m-d" }}</td>

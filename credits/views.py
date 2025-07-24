@@ -6,6 +6,23 @@ from wallets.models import Wallet
 import math
 from decimal import Decimal
 from django.db.models import Sum, Count, Avg
+from transactions.services import TransactionService
+
+def credit_approve(request, credit_id):
+    credit_request = get_object_or_404(Credit, id=credit_id)
+    credit_request.status = 'approved'
+    credit_request.save()
+
+    main_wallet = Wallet.objects.filter(user__email="cda@utpl.edu.ec").first()
+    
+    TransactionService.create_transfer(
+        sender_wallet=main_wallet,
+        recipient_wallet=credit_request.wallet,
+        amount=credit_request.amount,
+        description=f"Desembolso de crédito (ID: {credit_request.id})"
+    )
+
+    return redirect('admin_credit_review', credit_id=credit_request.id)
 
 @login_required
 def credit_request(request):
@@ -113,5 +130,15 @@ def admin_credit_list(request):
         'average_interest_rate': average_interest_rate,
         'pending_applications': pending_applications,
         'credit_types_data': credit_types_data,
+        'credits': Credit.objects.all(),
     }
     return render(request, 'credits/manage_credits.html', context)
+
+
+@login_required
+def admin_credit_review(request, credit_id):
+    credit = get_object_or_404(Credit, id=credit_id)
+    context = {
+        'credit': credit,
+    }
+    return render(request, 'credits/admin_credit_review.html', context)

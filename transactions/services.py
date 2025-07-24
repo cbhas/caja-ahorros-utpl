@@ -87,7 +87,7 @@ class TransactionService:
             # Transacción del receptor
             recipient_transaction = Transaction.objects.create(
                 wallet=recipient_wallet,
-                transaction_type='TRANSFER',
+                transaction_type='CREDIT_DEPOSIT',
                 amount=amount,
                 description=f"{description} recibida de {sender_wallet.user.email}",
                 reference_number=f"RCV-{reference}",

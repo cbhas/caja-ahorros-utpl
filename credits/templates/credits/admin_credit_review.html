@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CADUTPL Admin{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    {% include 'menu_styles.html' %}
+
+    {% block extra_css %}
+        <style>
+            :root {
+                --primary-color: #1e5a8a;
+                --primary-light: #2980b9;
+                --success-color: #28a745;
+                --warning-color: #ffc107;
+                --danger-color: #dc3545;
+                --light-bg: #f8f9fa;
+                --border-color: #dee2e6;
+                --text-muted: #6c757d;
+            }
+
+            .main-content {
+                padding-top: 1.5rem;
+            }
+
+            .btn-back {
+                margin-bottom: 1.5rem;
+            }
+
+            .review-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                border: none;
+                overflow: hidden;
+            }
+
+            .review-header {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 1.5rem 2rem;
+            }
+
+            .review-header h2 {
+                margin: 0;
+                font-size: 1.75rem;
+                font-weight: 600;
+            }
+
+            .review-header p {
+                margin: 0;
+                opacity: 0.9;
+                font-size: 1rem;
+            }
+
+            .review-body {
+                padding: 2rem;
+            }
+
+            .detail-section {
+                margin-bottom: 2.5rem;
+            }
+
+            .detail-section-title {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: var(--primary-color);
+                border-bottom: 2px solid var(--border-color);
+                padding-bottom: 0.75rem;
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+            }
+
+            .detail-section-title i {
+                margin-right: 0.75rem;
+            }
+
+            .detail-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.85rem 0.5rem;
+                border-bottom: 1px solid #f0f0f0;
+                transition: background-color 0.2s ease;
+            }
+
+            .detail-item:hover {
+                background-color: #f8f9fa;
+            }
+
+            .detail-item:last-child {
+                border-bottom: none;
+            }
+
+            .detail-label {
+                color: var(--text-muted);
+                font-weight: 500;
+            }
+
+            .detail-value {
+                font-weight: 600;
+                text-align: right;
+            }
+
+            .detail-value.status-approved {
+                color: var(--success-color);
+            }
+
+            .detail-value.status-pending {
+                color: var(--warning-color);
+            }
+
+            .detail-value.status-rejected {
+                color: var(--danger-color);
+            }
+
+            .detail-value .currency {
+                font-weight: 400;
+                color: var(--text-muted);
+                margin-right: 0.25rem;
+            }
+
+
+            .action-buttons {
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+                padding-top: 2rem;
+                border-top: 1px solid var(--border-color);
+                margin-top: 1rem;
+            }
+
+            .btn-action {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+                font-weight: 600;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .btn-approve {
+                background-color: var(--success-color);
+                border-color: var(--success-color);
+                color: white;
+            }
+
+            .btn-approve:hover {
+                background-color: #218838;
+                border-color: #1e7e34;
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-reject {
+                background-color: var(--danger-color);
+                border-color: var(--danger-color);
+                color: white;
+            }
+
+            .btn-reject:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+    {% endblock %}
+</head>
+
+<body>
+{% include 'navbar.html' %}
+
+{% include 'tabs_menu.html' %}
+
+
+<div class="container-fluid px-4 main-content">
+    {% block content %}
+        <a href="{% url 'admin_credits' %}" class="btn btn-back-warning btn-back"><i class="fas fa-arrow-left me-2"></i>
+            Volver a la Lista</a>
+
+        <div class="review-card">
+            <div class="review-header">
+                <h2>Revisión de Solicitud</h2>
+                <p>ID de Solicitud: {{ credit.id }}</p>
+            </div>
+            <div class="review-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="detail-section">
+                            <h5 class="detail-section-title"><i class="fas fa-user-circle"></i>Información del
+                                Solicitante</h5>
+                            <div class="detail-item">
+                                <span class="detail-label">Nombre Completo</span>
+                                <span class="detail-value">{{ credit.wallet.user.first_name }} {{ credit.wallet.user.last_name }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cédula / DNI</span>
+                                <span class="detail-value">{{ credit.wallet.user.document_number }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Correo Electrónico</span>
+                                <span class="detail-value">{{ credit.wallet.user.email }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Miembro Desde</span>
+                                <span class="detail-value">{{ credit.wallet.user.date_joined|date:"d M, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="detail-section">
+                            <h5 class="detail-section-title"><i class="fas fa-file-invoice-dollar"></i>Detalles del
+                                Crédito</h5>
+                            <div class="detail-item">
+                                <span class="detail-label">Monto Solicitado</span>
+                                <span class="detail-value"><span
+                                        class="currency">$</span>{{ credit.amount|floatformat:2 }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Plazo</span>
+                                <span class="detail-value">{{ credit.term }} meses</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Propósito</span>
+                                <span class="detail-value">{{ credit.purpose }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Tasa de Interés Anual</span>
+                                <span class="detail-value">{{ credit.interest_rate }}%</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cuota Mensual Estimada</span>
+                                <span class="detail-value"><span
+                                        class="currency">$</span>{{ credit.estimated_monthly_payment|floatformat:2 }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Estado Actual</span>
+                                <span class="detail-value status-{{ credit.status }}">{{ credit.get_status_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{% url 'credit_approve' credit.id %}" class="btn btn-action btn-approve"><i
+                            class="fas fa-check me-2"></i>Aprobar</a>
+                    <a href="#" class="btn btn-action btn-reject"><i class="fas fa-times me-2"></i>Rechazar</a>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+</div>

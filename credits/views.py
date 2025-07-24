@@ -144,7 +144,9 @@ def admin_credit_list(request):
 @login_required
 def admin_credit_review(request, credit_id):
     credit = get_object_or_404(Credit, id=credit_id)
+    payments = credit.payments.all().order_by('-payment_date')
     context = {
         'credit': credit,
+        'payments': payments,
     }
     return render(request, 'credits/admin_credit_review.html', context)

@@ -248,15 +248,42 @@
                         </div>
                     </div>
                 </div>
-                {% if credit.status != "pending" %}
 
-                {% else %}
+                {% if credit.status == "pending" %}
                     <div class="action-buttons">
                         <a href="{% url 'credit_approve' credit.id %}" class="btn btn-action btn-approve"><i
                                 class="fas fa-check me-2"></i>Aprobar</a>
                         <a href="#" class="btn btn-action btn-reject"><i class="fas fa-times me-2"></i>Rechazar</a>
                     </div>
                 {% endif %}
+
+                <div class="detail-section">
+                    <h5 class="detail-section-title"><i class="fas fa-money-bill-wave"></i>Historial de Pagos</h5>
+                    {% if payments %}
+                        <table class="payments-table">
+                            <thead>
+                            <tr>
+                                <th>Fecha de Pago</th>
+                                <th>Monto Pagado</th>
+                                <th>Referencia</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for payment in payments %}
+                                <tr>
+                                    <td>{{ payment.payment_date|date:"d M, Y H:i" }}</td>
+                                    <td><span class="currency">$</span>{{ payment.amount_paid|floatformat:2 }}</td>
+                                    <td>{{ payment.reference_number }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="no-payments">No hay pagos registrados para este crédito aún.</p>
+                    {% endif %}
+                    </div>
+                </div>
+
             </div>
         </div>
     {% endblock %}

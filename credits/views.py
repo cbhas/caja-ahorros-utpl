@@ -19,7 +19,7 @@ def credit_approve(request, credit_id):
         sender_wallet=main_wallet,
         recipient_wallet=credit_request.wallet,
         amount=credit_request.amount,
-        description=f"Desembolso de crédito (ID: {credit_request.id})"
+        description=f"Desembolso de crédito (Número de crédito #{credit_request.id})"
     )
 
     return redirect('admin_credit_review', credit_id=credit_request.id)
@@ -136,7 +136,7 @@ def admin_credit_list(request):
         'average_interest_rate': average_interest_rate,
         'pending_applications': pending_applications,
         'credit_types_data': credit_types_data,
-        'credits': Credit.objects.all(),
+        'credits': Credit.objects.all().order_by('-created_at'),
     }
     return render(request, 'credits/manage_credits.html', context)
 

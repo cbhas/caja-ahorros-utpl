@@ -27,11 +27,11 @@ class TransactionService:
         with transaction.atomic():
             transaction_obj = Transaction.objects.create(
                 wallet=wallet,
-                transaction_type='DEPOSIT',
+                transaction_type="DEPOSIT",
                 amount=amount,
                 description=description,
                 reference_number=cls.generate_reference(),
-                status='COMPLETED'
+                status="COMPLETED",
             )
 
             wallet.balance += Decimal(str(amount))
@@ -50,11 +50,11 @@ class TransactionService:
         with transaction.atomic():
             transaction_obj = Transaction.objects.create(
                 wallet=wallet,
-                transaction_type='WITHDRAWAL',
+                transaction_type="WITHDRAWAL",
                 amount=-amount,
                 description=description,
                 reference_number=cls.generate_reference(),
-                status='COMPLETED'
+                status="COMPLETED",
             )
 
             wallet.balance -= Decimal(str(amount))
@@ -63,7 +63,9 @@ class TransactionService:
             return transaction_obj
 
     @classmethod
-    def create_transfer(cls, sender_wallet, recipient_wallet, amount, description="Transferencia"):
+    def create_transfer(
+        cls, sender_wallet, recipient_wallet, amount, description="Transferencia"
+    ):
         """Crear una transferencia entre wallets"""
         cls.validate_amount(amount)
 
@@ -76,23 +78,23 @@ class TransactionService:
             # Transacción del emisor
             sender_transaction = Transaction.objects.create(
                 wallet=sender_wallet,
-                transaction_type='TRANSFER',
+                transaction_type="TRANSFER",
                 amount=-amount,
                 description=f"{description} enviada a {recipient_wallet.user.email}",
                 reference_number=reference,
                 recipient=recipient_wallet.user,
-                status='COMPLETED'
+                status="COMPLETED",
             )
 
             # Transacción del receptor
             recipient_transaction = Transaction.objects.create(
                 wallet=recipient_wallet,
-                transaction_type='CREDIT_DEPOSIT',
+                transaction_type="CREDIT_DEPOSIT",
                 amount=amount,
-                description=f"{description} recibida de {sender_wallet.user.email}",
+                description=f"{description} recibida de {sender_wallet.user.first_name} {sender_wallet.user.last_name}",
                 reference_number=f"RCV-{reference}",
                 recipient=sender_wallet.user,
-                status='COMPLETED'
+                status="COMPLETED",
             )
 
             # Actualizar balances

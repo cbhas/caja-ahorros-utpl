@@ -11,7 +11,7 @@ from users.models import CustomUser
 from django.http import JsonResponse
 from credits.models import Credit
 from django.http import JsonResponse
-
+from users.models import CustomUser
 
 @login_required
 def dashboard_view(request):
@@ -26,29 +26,29 @@ def dashboard_view(request):
             wallet=current_balance, created_at__date=today
         )
         daily_income = (
-                daily_transactions.filter(transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT","APORT"]).aggregate(
-                    total=Sum("amount")
-                )["total"]
-                or 0
+            daily_transactions.filter(
+                transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT", "APORT"]
+            ).aggregate(total=Sum("amount"))["total"]
+            or 0
         )
         daily_expenses = (
-                daily_transactions.filter(
-                    transaction_type__in=["WITHDRAWAL", "TRANSFER", "TICKET_PURCHASE"]
-                ).aggregate(total=Sum("amount"))["total"]
-                or 0
+            daily_transactions.filter(
+                transaction_type__in=["WITHDRAWAL", "TRANSFER", "TICKET_PURCHASE"]
+            ).aggregate(total=Sum("amount"))["total"]
+            or 0
         )
         transactions = Transaction.objects.filter(wallet=current_balance)
         income = (
-                transactions.filter(transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT","APORT"]).aggregate(
-                    total=Sum("amount")
-                )["total"]
-                or 0
+            transactions.filter(
+                transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT", "APORT"]
+            ).aggregate(total=Sum("amount"))["total"]
+            or 0
         )
         expenses = (
-                daily_transactions.filter(
-                    transaction_type__in=["WITHDRAWAL", "TRANSFER", "TICKET_PURCHASE"]
-                ).aggregate(total=Sum("amount"))["total"]
-                or 0
+            transactions.filter(
+                transaction_type__in=["WITHDRAWAL", "TRANSFER", "TICKET_PURCHASE"]
+            ).aggregate(total=Sum("amount"))["total"]
+            or 0
         )
         balance = income - expenses
 
@@ -61,8 +61,8 @@ def dashboard_view(request):
         recent_transactions = []
 
     if (
-            request.method == "POST"
-            and request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        request.method == "POST"
+        and request.headers.get("X-Requested-With") == "XMLHttpRequest"
     ):
         form = TransferForm(request.POST)
         if form.is_valid():
@@ -171,7 +171,7 @@ def validate_account(request):
 
 def admin_dashboard_view(request):
     if request.user.is_authenticated and not request.user.is_staff:
-        return redirect('home')
+        return redirect("home")
     # Socios (excluyendo staff)
     total_socios = CustomUser.objects.filter(is_staff=False).count()
     socios_verificados = CustomUser.objects.filter(
@@ -195,28 +195,45 @@ def admin_dashboard_view(request):
 
     # Suma de montos
     total_monto_creditos_activos = (
-            active_credits.aggregate(total=Sum("amount"))["total"] or 0
+        active_credits.aggregate(total=Sum("amount"))["total"] or 0
     )
     total_approved_credits = (
-            Credit.objects.filter(status="approved").aggregate(total=Sum("amount"))["total"]
-            or 0
+        Credit.objects.filter(status="approved").aggregate(total=Sum("amount"))["total"]
+        or 0
     )
 
     # Suma del saldo total de usuarios activos NO staff
     total_saldo_general = (
-            Wallet.objects.filter(user__is_active=True, user__is_staff=False).aggregate(
-                total=Sum("balance")
-            )["total"]
-            or 0
+        Wallet.objects.filter(user__is_active=True, user__is_staff=False).aggregate(
+            total=Sum("balance")
+        )["total"]
+        or 0
     )
 
     # Últimas 10 transacciones de usuarios normales (no staff)
     transacciones_recientes = (
-        Transaction.objects
-        .filter(wallet__user__is_staff=False)
+        Transaction.objects.filter(wallet__user__is_staff=False)
         .select_related("wallet__user")
         .order_by("-created_at")[:10]
     )
+
+    user = CustomUser.objects.filter(is_staff=False).first()
+    current_balance = Wallet.objects.filter(user=user).first()
+    transactions = Transaction.objects.filter(wallet=current_balance, wallet__user__is_staff=False)
+
+    income = (
+        transactions.filter(
+            transaction_type__in=["DEPOSIT", "CREDIT_DEPOSIT", "APORT"]
+        ).aggregate(total=Sum("amount"))["total"]
+        or 0
+    )
+    expenses = (
+        transactions.filter(
+            transaction_type__in=["WITHDRAWAL", "TRANSFER", "TICKET_PURCHASE"]
+        ).aggregate(total=Sum("amount"))["total"]
+        or 0
+    )
+    balance = income - expenses
 
     context = {
         "total_socios": total_socios,
@@ -228,7 +245,7 @@ def admin_dashboard_view(request):
         "total_pending_credits": total_pending_credits,
         "total_monto_creditos_activos": total_monto_creditos_activos,
         "total_approved_credits": total_approved_credits,
-        "total_saldo_general": total_saldo_general,
+        "total_saldo_general": balance,
         "transacciones_recientes": transacciones_recientes,
     }
 

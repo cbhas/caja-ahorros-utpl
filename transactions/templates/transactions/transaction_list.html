@@ -4,95 +4,495 @@
 {% block page_title %}Transacciones{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Transacciones</h2>
+<style>
+/* Variables CSS personalizadas */
+:root {
+    --primary-color: #004370;
+    --secondary-color: #FCBF01;
+    --text-color: #4b5563;
+    --bg-color: #f8fafc;
+    --card-shadow: 0 4px 20px rgba(0, 67, 112, 0.1);
+    --hover-shadow: 0 8px 30px rgba(0, 67, 112, 0.15);
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+}
+
+/* Animaciones */
+.fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateX(-30px);
+}
+
+@keyframes slideIn {
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Header mejorado */
+.page-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #005a8c 100%);
+    border-radius: 20px;
+    color: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.page-header h2 {
+    font-weight: 700;
+    font-size: clamp(24px, 4vw, 32px);
+    margin: 0;
+}
+
+/* Cards de resumen mejoradas */
+.summary-card {
+    background: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    transition: all 0.3s ease;
+}
+
+.summary-card.income::before {
+    background: linear-gradient(90deg, var(--success-color), #34d399);
+}
+
+.summary-card.expense::before {
+    background: linear-gradient(90deg, var(--danger-color), #f87171);
+}
+
+.summary-card.balance::before {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-shadow);
+}
+
+.summary-card .card-body {
+    padding: 2rem;
+    text-align: center;
+}
+
+.summary-card .card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 24px;
+    color: white;
+}
+
+.summary-card.income .card-icon {
+    background: linear-gradient(135deg, var(--success-color), #34d399);
+}
+
+.summary-card.expense .card-icon {
+    background: linear-gradient(135deg, var(--danger-color), #f87171);
+}
+
+.summary-card.balance .card-icon {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.summary-card .card-title {
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.summary-card .card-amount {
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Tabla moderna */
+.transactions-card {
+    background: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+.transactions-header {
+    background: linear-gradient(135deg, var(--bg-color) 0%, #e2e8f0 100%);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0, 67, 112, 0.1);
+}
+
+.transactions-header h5 {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 20px;
+    margin: 0;
+}
+
+.modern-table {
+    margin: 0;
+}
+
+.modern-table thead th {
+    background: rgba(0, 67, 112, 0.05);
+    border: none;
+    padding: 1.25rem 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modern-table tbody tr {
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.modern-table tbody tr:hover {
+    background: rgba(0, 67, 112, 0.03);
+    transform: scale(1.01);
+}
+
+.modern-table tbody td {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    vertical-align: middle;
+}
+
+.transaction-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.transaction-amount {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.transaction-date {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+.transaction-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.category-deposit {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+}
+
+.category-transfer {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.category-aport {
+    background: rgba(0, 67, 112, 0.1);
+    color: var(--primary-color);
+}
+
+/* Estado vacío */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-color);
+    opacity: 0.6;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    opacity: 0.3;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .summary-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .transactions-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .modern-table thead th,
+    .modern-table tbody td {
+        padding: 1rem;
+        font-size: 14px;
+    }
+    
+    .transaction-type {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .modern-table {
+        font-size: 13px;
+    }
+    
+    .modern-table thead th,
+    .modern-table tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .transaction-category {
+        font-size: 10px;
+        padding: 0.2rem 0.5rem;
+    }
+}
+
+/* Efecto de carga */
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+</style>
+
+<div class="container-fluid py-3">
+    <!-- Header -->
+    <div class="page-header fade-in">
+        <h2>
+            <i class="bi bi-credit-card-2-front me-3"></i>
+            Historial de Transacciones
+        </h2>
+        <p class="mb-0 opacity-75" style="font-size: 16px;">
+            Consulta todos tus movimientos financieros
+        </p>
+    </div>
 
     <!-- Cards de resumen -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card">
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="summary-card income fade-in" style="animation-delay: 0.1s;">
                 <div class="card-body">
-                    <h6 class="card-title">Total ingresos</h6>
-                    <h4 class="card-text text-success">${{ total_income|floatformat:2 }}</h4>
+                    <div class="card-icon">
+                        <i class="bi bi-arrow-down-circle"></i>
+                    </div>
+                    <h6 class="card-title">Total Ingresos</h6>
+                    <h4 class="card-amount text-success">${{ total_income | floatformat:2 }}</h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
+        
+        <div class="col-12 col-md-4">
+            <div class="summary-card expense fade-in" style="animation-delay: 0.2s;">
                 <div class="card-body">
-                    <h6 class="card-title">Total gastos</h6>
-                    <h4 class="card-text text-danger">${{ total_expenses|floatformat:2 }}</h4>
+                    <div class="card-icon">
+                        <i class="bi bi-arrow-up-circle"></i>
+                    </div>
+                    <h6 class="card-title">Total Gastos</h6>
+                    <h4 class="card-amount text-danger">${{ total_expenses | floatformat:2 }}</h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
+        
+        <div class="col-12 col-md-4">
+            <div class="summary-card balance fade-in" style="animation-delay: 0.3s;">
                 <div class="card-body">
-                    <h6 class="card-title">Balance</h6>
-                    <h4 class="card-text {% if balance >= 0 %}text-success{% else %}text-danger{% endif %}">
-                        ${{ balance|floatformat:2 }}
+                    <div class="card-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <h6 class="card-title">Balance Total</h6>
+                    <h4 class="card-amount {% if balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        ${{ balance }}
                     </h4>
                 </div>
             </div>
         </div>
     </div>
 
-
     <!-- Lista de transacciones -->
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Lista de transacciones</h5>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Destinatario</th>
-                            <th>Descripción</th>
-                            <th>Categoría</th>
-                            <th>Monto</th>
-                            <th>Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for transaction in transactions %}
-                        <tr>
-                            <td>
+    <div class="transactions-card fade-in" style="animation-delay: 0.4s;">
+        <div class="transactions-header">
+            <h5>
+                <i class="bi bi-list-ul me-2"></i>
+                Detalle de Transacciones
+            </h5>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table modern-table">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-person me-1"></i>Destinatario</th>
+                        <th><i class="bi bi-chat-text me-1"></i>Descripción</th>
+                        <th><i class="bi bi-tag me-1"></i>Categoría</th>
+                        <th><i class="bi bi-currency-dollar me-1"></i>Monto</th>
+                        <th><i class="bi bi-calendar me-1"></i>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr class="slide-in" style="animation-delay: {{ forloop.counter|floatformat:2}}s;">
+                        <td>
+                            <div class="transaction-type">
                                 {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'APORT'%}
-                                <b>Recibido de:</b> {{transaction.recipient.get_full_name }}
+                                    <i class="bi bi-arrow-down-circle text-success"></i>
+                                    <div>
+                                        <strong style="color: var(--text-color);">Recibido de:</strong>
+                                        <div style="color: var(--success-color); font-weight: 600;">
+                                            {{ transaction.recipient.get_full_name }}
+                                        </div>
+                                    </div>
                                 {% else %}
-                                <b>Enviado a:</b> {{ transaction.recipient.get_full_name }}
+                                    <i class="bi bi-arrow-up-circle text-danger"></i>
+                                    <div>
+                                        <strong style="color: var(--text-color);">Enviado a:</strong>
+                                        <div style="color: var(--danger-color); font-weight: 600;">
+                                            {{ transaction.recipient.get_full_name }}
+                                        </div>
+                                    </div>
                                 {% endif %}
-                            </td>
-                            <td>{{ transaction.description }}</td>
-                            <td>{{ transaction.get_transaction_type_display }}</td>
-                            <td
-                                class="{% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'APORT'  %}text-success{% else %}text-danger{% endif %}">
-                                {% if transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'APORT'%}+{% else %}-{% endif %}
+                            </div>
+                        </td>
+                        
+                        <td style="color: var(--text-color);">
+                            {{ transaction.description|default:"Sin descripción" }}
+                        </td>
+                        
+                        <td>
+                            <span class="transaction-category 
+                                {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT' %}category-deposit
+                                {% elif transaction.transaction_type == 'APORT' %}category-aport
+                                {% else %}category-transfer{% endif %}">
+                                {{ transaction.get_transaction_type_display }}
+                            </span>
+                        </td>
+                        
+                        <td>
+                            <span class="transaction-amount {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'APORT' %}text-success{% else %}text-danger{% endif %}">
+                                {% if transaction.transaction_type == 'CREDIT_DEPOSIT' or transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'APORT' %}+{% else %}-{% endif %}
                                 ${{ transaction.amount|floatformat:2 }}
-                            </td>
-                            <td>{{ transaction.created_at|date:"Y-m-d" }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                            </span>
+                        </td>
+                        
+                        <td class="transaction-date">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            {{ transaction.created_at|date:"d M Y" }}
+                            <div style="font-size: 12px; opacity: 0.6;">
+                                {{ transaction.created_at|date:"H:i" }}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <h5>No hay transacciones registradas</h5>
+                                <p class="mb-0">Cuando realices tu primera transacción, aparecerá aquí.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animaciones escalonadas
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach((el, index) => {
+        setTimeout(() => {
+            el.style.animationDelay = `${index * 0.1}s`;
+        }, 50);
+    });
+    
+    const slideElements = document.querySelectorAll('.slide-in');
+    slideElements.forEach((el, index) => {
+        setTimeout(() => {
+            el.style.animationDelay = `${index * 0.05}s`;
+        }, 100);
+    });
+    
+    // Efecto hover en las filas de la tabla
+    const tableRows = document.querySelectorAll('.modern-table tbody tr');
+    tableRows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.01)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+});
+</script>
+
 {% endblock %}
 
 {% block extra_css %}
-<style>
-    .card {
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border: none;
-        border-radius: 8px;
-    }
-
-    .table td,
-    .table th {
-        padding: 1rem;
-        vertical-align: middle;
-    }
-</style>
+<!-- CSS adicional ya incluido en el template -->
 {% endblock extra_css %}

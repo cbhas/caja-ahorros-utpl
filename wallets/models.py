@@ -16,16 +16,20 @@ class Wallet(models.Model):
         """
         Método para agregar una transacción a esta billetera.
         """
-        from transactions.models import Transaction  # Importa el modelo de transacciones unificado
+        from transactions.models import Transaction
+        from transactions.utils import generate_unique_reference  # ✅ importar la función
+
         transaction = Transaction.objects.create(
             wallet=self,
             transaction_type=transaction_type,
             amount=amount,
             description=description,
             recipient=recipient,
-            status=status
+            status=status,
+            reference_number=generate_unique_reference()  # ✅ campo único generado
         )
         return transaction
+
 
     def update_balance(self, amount, operation):
         """

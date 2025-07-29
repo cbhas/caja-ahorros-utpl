@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from .manager import CustomUserManager  # Importar el manager personalizado
+import uuid
 
 
 class CustomUser(AbstractUser):

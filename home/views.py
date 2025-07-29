@@ -13,6 +13,7 @@ from credits.models import Credit
 from django.http import JsonResponse
 from users.models import CustomUser
 
+
 @login_required
 def dashboard_view(request):
     news = New.objects.all().order_by("-date")[:2]
@@ -50,7 +51,8 @@ def dashboard_view(request):
             ).aggregate(total=Sum("amount"))["total"]
             or 0
         )
-        balance = income - expenses
+        calculated_balance = income - expenses
+        real_balance = current_balance.balance
 
         recent_transactions = Transaction.objects.filter(
             wallet=current_balance
@@ -58,6 +60,7 @@ def dashboard_view(request):
     else:
         daily_income = 0
         daily_expenses = 0
+        balance = 0
         recent_transactions = []
 
     if (
@@ -132,7 +135,8 @@ def dashboard_view(request):
         "form": form,
         "recent_transactions": recent_transactions,
         "news": news,
-        "balance": balance,
+        "calculated_balance": calculated_balance,
+        "real_balance": real_balance,
     }
 
     return render(request, "home/home.html", context)
@@ -219,7 +223,9 @@ def admin_dashboard_view(request):
 
     user = CustomUser.objects.filter(is_staff=False).first()
     current_balance = Wallet.objects.filter(user=user).first()
-    transactions = Transaction.objects.filter(wallet=current_balance, wallet__user__is_staff=False)
+    transactions = Transaction.objects.filter(
+        wallet=current_balance, wallet__user__is_staff=False
+    )
 
     income = (
         transactions.filter(
@@ -245,7 +251,7 @@ def admin_dashboard_view(request):
         "total_pending_credits": total_pending_credits,
         "total_monto_creditos_activos": total_monto_creditos_activos,
         "total_approved_credits": total_approved_credits,
-        "total_saldo_general": balance,
+        "total_saldo_general": total_saldo_general,
         "transacciones_recientes": transacciones_recientes,
     }
 

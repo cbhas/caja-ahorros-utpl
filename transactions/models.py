@@ -43,7 +43,7 @@ class Transaction(models.Model):
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="COMPLETED"
     )
-    reference_number = models.CharField(max_length=50, unique=True)
+    reference_number = models.CharField(max_length=50, unique=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -5,511 +5,549 @@
 
 {% block content %}
 <style>
-    /* --- Estilos personalizados para Savings Goals --- */
+/* Variables CSS personalizadas */
+:root {
+    --primary-color: #004370;
+    --secondary-color: #FCBF01;
+    --text-color: #4b5563;
+    --bg-color: #f8fafc;
+    --card-shadow: 0 4px 20px rgba(0, 67, 112, 0.1);
+    --hover-shadow: 0 8px 30px rgba(0, 67, 112, 0.15);
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #3b82f6;
+}
+
+/* Animaciones */
+.fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+@keyframes scaleIn {
+    to { opacity: 1; transform: scale(1); }
+}
+
+.bounce-in {
+    animation: bounceIn 0.6s ease-out forwards;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Container principal */
+.sg-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Header con gradiente */
+.page-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #005a8c 100%);
+    border-radius: 24px;
+    color: white;
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.page-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 200px;
+    height: 200px;
+    background: rgba(252, 191, 1, 0.2);
+    border-radius: 50%;
+}
+
+.page-header h1 {
+    font-weight: 700;
+    font-size: clamp(24px, 4vw, 36px);
+    margin: 0 0 0.5rem 0;
+    position: relative;
+    z-index: 2;
+}
+
+.page-header p {
+    font-size: clamp(14px, 2.5vw, 18px);
+    opacity: 0.9;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Botón crear objetivo */
+.create-goal-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+}
+
+.sg-btn-create {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #ffd700 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(252, 191, 1, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.sg-btn-create::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    transform: translate(-50%, -50%);
+}
+
+.sg-btn-create:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.sg-btn-create:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(252, 191, 1, 0.4);
+    color: white;
+}
+
+/* Grid de objetivos */
+.sg-goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+/* Cards de objetivos mejoradas */
+.sg-goal-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(0, 67, 112, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: fit-content;
+}
+
+.sg-goal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.sg-goal-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--hover-shadow);
+}
+
+.sg-goal-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.sg-goal-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: white;
+    font-size: 20px;
+}
+
+.sg-goal-title {
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin: 0;
+    flex: 1;
+}
+
+.sg-goal-meta {
+    background: rgba(0, 67, 112, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.sg-goal-meta-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.sg-goal-meta-item:last-child {
+    margin-bottom: 0;
+}
+
+.sg-goal-meta-label {
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.sg-goal-meta-value {
+    font-weight: 600;
+}
+
+.sg-goal-amount {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.sg-current-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block;
+}
+
+.sg-target-amount {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-top: 0.25rem;
+}
+
+/* Barra de progreso mejorada */
+.sg-progress-container {
+    background: rgba(0, 67, 112, 0.1);
+    height: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.sg-progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.sg-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.sg-progress-bar.success {
+    background: linear-gradient(90deg, var(--success-color), #34d399);
+}
+
+.sg-progress-bar.info {
+    background: linear-gradient(90deg, var(--info-color), #60a5fa);
+}
+
+.sg-progress-bar.warning {
+    background: linear-gradient(90deg, var(--warning-color), #fbbf24);
+}
+
+.sg-progress-bar.danger {
+    background: linear-gradient(90deg, var(--danger-color), #f87171);
+}
+
+.sg-goal-progress-text {
+    text-align: center;
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.progress-percentage {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Botón agregar fondos */
+.sg-btn-add-funds {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #005a8c 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    width: 100%;
+    font-size: 15px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.sg-btn-add-funds::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    transform: translate(-50%, -50%);
+}
+
+.sg-btn-add-funds:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.sg-btn-add-funds:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 67, 112, 0.3);
+    color: white;
+}
+
+/* Estado vacío mejorado */
+.sg-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 24px;
+    box-shadow: var(--card-shadow);
+    border: 2px dashed rgba(0, 67, 112, 0.2);
+}
+
+.sg-empty-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    position: relative;
+}
+
+.sg-empty-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: inherit;
+    opacity: 0.3;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.1; }
+    100% { transform: scale(1); opacity: 0.3; }
+}
+
+.sg-empty-state h3 {
+    color: var(--text-color);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.sg-empty-state p {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* Estados de objetivos completados */
+.sg-goal-card.completed {
+    background: linear-gradient(135deg, 
+        rgba(16, 185, 129, 0.05) 0%, 
+        rgba(52, 211, 153, 0.05) 100%);
+    border-color: var(--success-color);
+}
+
+.sg-goal-card.completed::before {
+    background: linear-gradient(90deg, var(--success-color), #34d399);
+}
+
+.completed-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--success-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
     .sg-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 1rem;
+        padding: 1rem 0.5rem;
     }
-
-    .sg-page-title {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.75rem;
+    
+    .page-header {
+        padding: 2rem 1.5rem;
         margin-bottom: 2rem;
     }
-
-    .sg-summary-card {
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        padding: 2rem;
-        margin-bottom: 2.5rem;
-        border: 1px solid #e9ecef;
-    }
-
-    .sg-summary-title {
-        color: #2c3e50;
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-
-    .sg-summary-subtitle {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .sg-summary-amount {
-        color: #2c3e50;
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-
-    .sg-progress-container {
-        background-color: #f8f9fa;
-        height: 12px;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-bottom: 0.75rem;
-    }
-
-    .sg-progress-bar {
-        background: linear-gradient(90deg, #ffc107, #ffca2c);
-        height: 100%;
-        border-radius: 8px;
-        transition: width 0.8s ease;
-    }
-
-    .sg-progress-text {
-        color: #6c757d;
-        font-size: 0.875rem;
-    }
-
+    
     .sg-goals-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        grid-template-columns: 1fr;
         gap: 1.5rem;
-        margin-bottom: 2.5rem;
     }
-
+    
     .sg-goal-card {
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         padding: 1.5rem;
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
     }
-
-    .sg-goal-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .sg-goal-title {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.125rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .sg-goal-meta {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-bottom: 1.25rem;
-        line-height: 1.4;
-    }
-
-    .sg-goal-amount {
-        color: #2c3e50;
-        font-size: 1.375rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-
-    .sg-goal-progress-text {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .sg-btn-add-funds {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        border: none;
-        color: white;
-        font-weight: 500;
-        border-radius: 10px;
-        padding: 12px 20px;
-        width: 100%;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-    }
-
-    .sg-btn-add-funds:hover {
-        background: linear-gradient(135deg, #0056b3, #004085);
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-    }
-
-    .sg-create-section {
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        padding: 2rem;
-        border: 1px solid #e9ecef;
-    }
-
-    .sg-create-title {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.25rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .sg-create-subtitle {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-bottom: 2rem;
-    }
-
-    .sg-form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .sg-form-group {
+    
+    .create-goal-section {
+        justify-content: center;
         margin-bottom: 1.5rem;
     }
-
-    .sg-form-label {
-        color: #495057;
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-
-    .sg-form-control {
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
-        font-size: 0.875rem;
-        width: 100%;
-        transition: border-color 0.3s ease;
-    }
-
-    .sg-form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        outline: 0;
-    }
-
+    
     .sg-btn-create {
-        background: linear-gradient(135deg, #ffc107, #ffca2c);
-        border: none;
-        color: #2c3e50;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 15px 30px;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        cursor: pointer;
+        padding: 0.875rem 1.5rem;
+        font-size: 14px;
     }
-
-    .sg-btn-create:hover {
-        background: linear-gradient(135deg, #ffca2c, #ffd60a);
-        color: #2c3e50;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    
+    .sg-current-amount {
+        font-size: 1.6rem;
     }
+}
 
-    .sg-empty-state {
+@media (max-width: 576px) {
+    .sg-goal-header {
+        flex-direction: column;
         text-align: center;
-        padding: 3rem 1rem;
-        color: #6c757d;
+        gap: 1rem;
     }
-
-    .sg-empty-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        color: #dee2e6;
-    }
-
-    /* --- Estilos del Modal Pop-up --- */
-    .sg-modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .sg-modal-overlay.active {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 1;
-    }
-
-    .sg-modal {
-        background: white;
-        border-radius: 16px;
-        padding: 2rem;
-        max-width: 500px;
-        width: 90%;
-        max-height: 80vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        transform: scale(0.8);
-        transition: transform 0.3s ease;
-    }
-
-    .sg-modal-overlay.active .sg-modal {
-        transform: scale(1);
-    }
-
-    .sg-modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .sg-modal-title {
-        color: #2c3e50;
-        font-size: 1.25rem;
-        font-weight: 600;
+    
+    .sg-goal-icon {
         margin: 0;
     }
-
-    .sg-modal-close {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: #6c757d;
-        cursor: pointer;
-        padding: 0;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: all 0.2s ease;
-    }
-
-    .sg-modal-close:hover {
-        background-color: #f8f9fa;
-        color: #495057;
-    }
-
-    .sg-wallet-info {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-        border: 1px solid #e9ecef;
-    }
-
-    .sg-wallet-balance {
-        color: #495057;
-        font-size: 0.875rem;
-        margin: 0;
-    }
-
-    .sg-wallet-amount {
-        color: #007bff;
-        font-weight: 600;
-        font-size: 1.125rem;
-    }
-
-    .sg-btn-submit {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        border: none;
-        color: white;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 12px 24px;
-        width: 100%;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        cursor: pointer;
-    }
-
-    .sg-btn-submit:hover {
-        background: linear-gradient(135deg, #20c997, #17a2b8);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-    }
-
-    .sg-btn-cancel {
-        background: #6c757d;
-        border: none;
-        color: white;
-        font-weight: 500;
-        border-radius: 10px;
-        padding: 12px 24px;
-        width: 100%;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        cursor: pointer;
-        margin-top: 0.5rem;
-    }
-
-    .sg-btn-cancel:hover {
-        background: #545b62;
-        transform: translateY(-1px);
-    }
-
-    .sg-error-message {
-        background: #f8d7da;
-        color: #721c24;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        border: 1px solid #f5c6cb;
-        font-size: 0.875rem;
-    }
-
-    .sg-success-message {
-        background: #d4edda;
-        color: #155724;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        border: 1px solid #c3e6cb;
-        font-size: 0.875rem;
-    }
-
-    /* --- Estilos para las opciones de categoría --- */
-    .category-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
-    .category-option {
-        background: #f8f9fa;
-        border: 2px solid #e9ecef;
-        border-radius: 8px;
-        padding: 0.75rem;
+    
+    .sg-goal-meta-item {
+        flex-direction: column;
+        gap: 0.25rem;
         text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #495057;
-        user-select: none;
     }
+}
 
-    .category-option:hover {
-        background: #e9ecef;
-        border-color: #dee2e6;
-        transform: translateY(-1px);
-    }
+/* Efecto de carga para las barras de progreso */
+.progress-loading {
+    position: relative;
+}
 
-    .category-option.selected {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        border-color: #007bff;
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
-    }
+.progress-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.6), 
+        transparent);
+    animation: loading 1.5s infinite;
+}
 
-    .category-option.selected:hover {
-        background: linear-gradient(135deg, #0056b3, #004085);
-        border-color: #0056b3;
-    }
-
-    /* Iconos para las categorías */
-    .category-option::before {
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        margin-right: 0.5rem;
-        font-size: 1rem;
-    }
-
-    .category-option[data-value="VACACIONES"]::before {
-        content: "\f5a0";
-        /* fa-plane-departure */
-    }
-
-    .category-option[data-value="AUTO"]::before {
-        content: "\f1b9";
-        /* fa-car */
-    }
-
-    .category-option[data-value="EMERGENCIA"]::before {
-        content: "\f0f3";
-        /* fa-bell */
-    }
-
-    .category-option[data-value="CASA"]::before {
-        content: "\f015";
-        /* fa-home */
-    }
-
-    .category-option[data-value="EDUCACION"]::before {
-        content: "\f19d";
-        /* fa-graduation-cap */
-    }
-
-    .category-option[data-value="SALUD"]::before {
-        content: "\f0f0";
-        /* fa-plus-square */
-    }
-
-    .category-option[data-value="OTRO"]::before {
-        content: "\f1b2";
-        /* fa-cube */
-    }
-
-    @media (max-width: 768px) {
-        .sg-container {
-            padding: 1rem;
-        }
-
-        .sg-summary-amount {
-            font-size: 1.5rem;
-        }
-
-        .sg-form-grid {
-            grid-template-columns: 1fr;
-            gap: 0;
-        }
-
-        .sg-modal {
-            width: 95%;
-            padding: 1.5rem;
-        }
-
-        .category-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .sg-progress-bar.success {
-            background-color: #28a745;
-        }
-
-        .sg-progress-bar.info {
-            background-color: #17a2b8;
-        }
-
-        .sg-progress-bar.warning {
-            background-color: #ffc107;
-        }
-
-        .sg-progress-bar.danger {
-            background-color: #dc3545;
-        }
-    }
+@keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
 </style>
 
-<div class="sg-container">
-    <h1 class="sg-page-title">Ahorro Objetivo</h1>
+<div class="container-fluid py-3">
+    <!-- Header principal -->
+    <div class="page-header fade-in">
+        <h1>
+            <i class="bi bi-piggy-bank me-3"></i>
+            Objetivos de Ahorro
+        </h1>
+        <p>Convierte tus sueños en metas alcanzables con nuestro sistema de ahorro inteligente</p>
+    </div>
 
     <!-- Botón para crear nuevo objetivo -->
-    <div class="text-end mb-4">
+    <div class="create-goal-section fade-in" style="animation-delay: 0.1s;">
         <a href="{% url 'savings_goals:create' %}" class="sg-btn-create">
-            <i class="fas fa-plus-circle me-2"></i> Crear Nuevo Objetivo
+            <i class="bi bi-plus-circle"></i>
+            Crear Nuevo Objetivo
         </a>
     </div>
 
@@ -517,34 +555,180 @@
     {% if goals %}
     <div class="sg-goals-grid">
         {% for goal in goals %}
-        <div class="sg-goal-card">
-            <div class="sg-goal-title">{{ goal.name }}</div>
+        <div class="sg-goal-card scale-in {% if goal.progress_percentage >= 100 %}completed{% endif %}" 
+             style="animation-delay: {{ forloop.counter|floatformat:2 }}s;">
+            
+            {% if goal.progress_percentage >= 100 %}
+            <div class="completed-badge">
+                <i class="bi bi-check-circle me-1"></i>Completado
+            </div>
+            {% endif %}
+            
+            <div class="sg-goal-header">
+                <div class="sg-goal-icon">
+                    <i class="bi bi-{% if goal.category == 'VACACIONES' %}airplane{% elif goal.category == 'AUTO' %}car-front{% elif goal.category == 'EMERGENCIA' %}shield-exclamation{% elif goal.category == 'CASA' %}house{% elif goal.category == 'EDUCACION' %}mortarboard{% elif goal.category == 'SALUD' %}heart-pulse{% else %}star{% endif %}"></i>
+                </div>
+                <h3 class="sg-goal-title">{{ goal.name }}</h3>
+            </div>
+
             <div class="sg-goal-meta">
-                Meta: ${{ goal.target_amount|floatformat:2 }}<br>
-                Fecha: {{ goal.target_date|date:"d/m/Y" }}
+                <div class="sg-goal-meta-item">
+                    <span class="sg-goal-meta-label">
+                        <i class="bi bi-bullseye me-1"></i>Meta:
+                    </span>
+                    <span class="sg-goal-meta-value">${{ goal.target_amount|floatformat:2 }}</span>
+                </div>
+                <div class="sg-goal-meta-item">
+                    <span class="sg-goal-meta-label">
+                        <i class="bi bi-calendar-event me-1"></i>Fecha límite:
+                    </span>
+                    <span class="sg-goal-meta-value">{{ goal.target_date|date:"d/m/Y" }}</span>
+                </div>
+                {% if goal.target_date %}
+                <div class="sg-goal-meta-item">
+                    <span class="sg-goal-meta-label">
+                        <i class="bi bi-clock me-1"></i>Días restantes:
+                    </span>
+                    <span class="sg-goal-meta-value">
+                        {% now "Y-m-d" as today %}
+                        {{ goal.target_date|timeuntil }}
+                    </span>
+                </div>
+                {% endif %}
             </div>
+
             <div class="sg-goal-amount">
-                ${{ goal.current_amount|floatformat:2 }} / ${{ goal.target_amount|floatformat:2 }}
+                <span class="sg-current-amount">${{ goal.current_amount }}</span>
+                <div class="sg-target-amount">de ${{ goal.target_amount }}</div>
             </div>
+
             <div class="sg-progress-container">
-                <div class="sg-progress-bar {{ goal.progress_color }}"
-                    style="width: {{ goal.progress_percentage|floatformat:0 }}%;"></div>
+                <div class="sg-progress-bar progress-loading
+                    {% if goal.progress_percentage >= 100 %}success
+                    {% elif goal.progress_percentage >= 75 %}info
+                    {% elif goal.progress_percentage >= 50 %}warning
+                    {% else %}danger{% endif %}"
+                    style="width: {{ goal.progress_percentage|floatformat:0 }}%;">
+                </div>
             </div>
+
             <div class="sg-goal-progress-text">
-                Has ahorrado el {{ goal.progress_percentage|floatformat:1 }}% de tu meta
+                Has ahorrado el 
+                <span class="progress-percentage">{{ goal.progress_percentage|floatformat:1 }}%</span> 
+                de tu meta
+                {% if goal.progress_percentage >= 100 %}
+                    <br><strong style="color: var(--success-color);">
+                        <i class="bi bi-trophy me-1"></i>¡Meta alcanzada!
+                    </strong>
+                {% endif %}
             </div>
-            {% if goal.status == 'ACTIVO' %}
-            <a href="{% url 'savings_goals:add_funds' goal.id %}" class="sg-btn-add-funds">Agregar fondos</a>
+
+            {% if goal.status == 'ACTIVO' and goal.progress_percentage < 100 %}
+            <a href="{% url 'savings_goals:add_funds' goal.id %}" class="sg-btn-add-funds">
+                <i class="bi bi-plus-circle me-2"></i>Agregar Fondos
+            </a>
+            {% elif goal.progress_percentage >= 100 %}
+            <div class="sg-btn-add-funds" style="background: var(--success-color); cursor: default;">
+                <i class="bi bi-check-circle me-2"></i>Objetivo Completado
+            </div>
             {% endif %}
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <div class="sg-empty-state">
-        <div class="sg-empty-icon"><i class="fas fa-piggy-bank"></i></div>
-        <h3>No tienes objetivos de ahorro aún</h3>
-        <p>Comienza creando tu primer objetivo de ahorro</p>
+    <div class="sg-empty-state bounce-in">
+        <div class="sg-empty-icon">
+            <i class="bi bi-piggy-bank"></i>
+        </div>
+        <h3>¡Comienza tu aventura de ahorro!</h3>
+        <p>No tienes objetivos de ahorro aún. Crea tu primer objetivo y empieza a construir tu futuro financiero.</p>
+        <a href="{% url 'savings_goals:create' %}" class="sg-btn-create">
+            <i class="bi bi-plus-circle me-2"></i>Crear Mi Primer Objetivo
+        </a>
     </div>
     {% endif %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animaciones de entrada escalonadas
+    const fadeElements = document.querySelectorAll('.fade-in');
+    const scaleElements = document.querySelectorAll('.scale-in');
+    
+    // Aplicar delays a las animaciones
+    fadeElements.forEach((el, index) => {
+        el.style.animationDelay = `${index * 0.1}s`;
+    });
+    
+    scaleElements.forEach((el, index) => {
+        el.style.animationDelay = `${index * 0.15}s`;
+    });
+    
+    // Animación de las barras de progreso
+    const progressBars = document.querySelectorAll('.sg-progress-bar');
+    progressBars.forEach((bar, index) => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 500 + (index * 200));
+    });
+    
+    // Efecto hover en las cards
+    const goalCards = document.querySelectorAll('.sg-goal-card');
+    goalCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+    
+    // Efectos de partículas para objetivos completados
+    const completedCards = document.querySelectorAll('.sg-goal-card.completed');
+    completedCards.forEach(card => {
+        // Agregar efecto de confetti o partículas
+        card.addEventListener('mouseenter', function() {
+            createConfetti(this);
+        });
+    });
+    
+    function createConfetti(element) {
+        // Crear pequeños elementos de confetti
+        for (let i = 0; i < 10; i++) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'absolute';
+            confetti.style.width = '4px';
+            confetti.style.height = '4px';
+            confetti.style.background = 'var(--secondary-color)';
+            confetti.style.pointerEvents = 'none';
+            confetti.style.borderRadius = '50%';
+            confetti.style.top = '50%';
+            confetti.style.left = '50%';
+            confetti.style.zIndex = '1000';
+            
+            element.appendChild(confetti);
+            
+            // Animar el confetti
+            confetti.animate([
+                { 
+                    transform: 'translate(-50%, -50%) scale(0)', 
+                    opacity: 1 
+                },
+                { 
+                    transform: `translate(${(Math.random() - 0.5) * 100}px, ${(Math.random() - 0.5) * 100}px) scale(1)`, 
+                    opacity: 0 
+                }
+            ], {
+                duration: 1000,
+                easing: 'ease-out'
+            }).onfinish = () => confetti.remove();
+        }
+    }
+});
+</script>
+
 {% endblock %}

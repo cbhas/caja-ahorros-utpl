@@ -1,4 +1,5 @@
 from django import forms
+from decimal import Decimal
 
 class TransferForm(forms.Form):
     recipient_cedula = forms.CharField(
@@ -8,12 +9,12 @@ class TransferForm(forms.Form):
         label="Número de cédula del destinatario"
     )
     amount = forms.DecimalField(
+        label="Monto a agregar",
+        min_value=Decimal("0.01"),
         max_digits=10,
-        decimal_places=2,
-        min_value=0.01,
-        label="Monto a transferir",
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
+        decimal_places=2
     )
+
     description = forms.CharField(
         max_length=255,
         required=False,

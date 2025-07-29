@@ -1,536 +1,165 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
-{% block page_title %}Ahorro Objetivo{% endblock %}
+{% block page_title %}Agregar Fondos - {{ goal.name }}{% endblock %}
 
 {% block content %}
+<!-- Aquí solo incluimos los estilos modernos sin cambiar la lógica -->
 <style>
-    /* --- Estilos personalizados para Savings Goals --- */
-    .sg-container {
-        max-width: 1200px;
+    :root {
+        --primary-color: #004370;
+        --secondary-color: #FCBF01;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --text-color: #4b5563;
+        --bg-color: #f8fafc;
+    }
+
+    .af-container {
+        max-width: 800px;
         margin: 0 auto;
         padding: 2rem 1rem;
     }
 
-    .sg-page-title {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.75rem;
-        margin-bottom: 2rem;
-    }
-
-    .sg-summary-card {
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        padding: 2rem;
-        margin-bottom: 2.5rem;
-        border: 1px solid #e9ecef;
-    }
-
-    .sg-summary-title {
-        color: #2c3e50;
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-
-    .sg-summary-subtitle {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .sg-summary-amount {
-        color: #2c3e50;
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-
-    .sg-progress-container {
-        background-color: #f8f9fa;
-        height: 12px;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-bottom: 0.75rem;
-    }
-
-    .sg-progress-bar {
-        background: linear-gradient(90deg, #ffc107, #ffca2c);
-        height: 100%;
-        border-radius: 8px;
-        transition: width 0.8s ease;
-    }
-
-    .sg-progress-text {
-        color: #6c757d;
-        font-size: 0.875rem;
-    }
-
-    .sg-goals-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2.5rem;
-    }
-
-    .sg-goal-card {
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        padding: 1.5rem;
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
-    }
-
-    .sg-goal-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .sg-goal-title {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.125rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .sg-goal-meta {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-bottom: 1.25rem;
-        line-height: 1.4;
-    }
-
-    .sg-goal-amount {
-        color: #2c3e50;
-        font-size: 1.375rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-
-    .sg-goal-progress-text {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .sg-btn-add-funds {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        border: none;
+    .af-header {
+        background: linear-gradient(135deg, var(--primary-color), #005a8c);
+        border-radius: 24px;
         color: white;
-        font-weight: 500;
-        border-radius: 10px;
-        padding: 12px 20px;
-        width: 100%;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-    }
-
-    .sg-btn-add-funds:hover {
-        background: linear-gradient(135deg, #0056b3, #004085);
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-    }
-
-    .sg-create-section {
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         padding: 2rem;
-        border: 1px solid #e9ecef;
-    }
-
-    .sg-create-title {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.25rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .sg-create-subtitle {
-        color: #6c757d;
-        font-size: 0.875rem;
         margin-bottom: 2rem;
     }
 
-    .sg-form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .sg-form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .sg-form-label {
-        color: #495057;
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-
-    .sg-form-control {
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
-        font-size: 0.875rem;
-        width: 100%;
-        transition: border-color 0.3s ease;
-    }
-
-    .sg-form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        outline: 0;
-    }
-
-    .sg-btn-create {
-        background: linear-gradient(135deg, #ffc107, #ffca2c);
-        border: none;
-        color: #2c3e50;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 15px 30px;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        cursor: pointer;
-    }
-
-    .sg-btn-create:hover {
-        background: linear-gradient(135deg, #ffca2c, #ffd60a);
-        color: #2c3e50;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-    }
-
-    .sg-empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-        color: #6c757d;
-    }
-
-    .sg-empty-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        color: #dee2e6;
-    }
-
-    /* --- Estilos del Modal Pop-up --- */
-    .sg-modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .sg-modal-overlay.active {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 1;
-    }
-
-    .sg-modal {
+    .af-form-section {
         background: white;
-        border-radius: 16px;
         padding: 2rem;
-        max-width: 500px;
-        width: 90%;
-        max-height: 80vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        transform: scale(0.8);
-        transition: transform 0.3s ease;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 67, 112, 0.1);
+        border-top: 5px solid var(--primary-color);
     }
 
-    .sg-modal-overlay.active .sg-modal {
-        transform: scale(1);
-    }
-
-    .sg-modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .sg-modal-title {
-        color: #2c3e50;
-        font-size: 1.25rem;
+    .af-form-label {
+        display: block;
         font-weight: 600;
-        margin: 0;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
     }
 
-    .sg-modal-close {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: #6c757d;
-        cursor: pointer;
-        padding: 0;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: all 0.2s ease;
-    }
-
-    .sg-modal-close:hover {
-        background-color: #f8f9fa;
-        color: #495057;
-    }
-
-    .sg-wallet-info {
-        background: #f8f9fa;
-        border-radius: 10px;
+    .af-form-control {
+        width: 100%;
         padding: 1rem;
-        margin-bottom: 1.5rem;
-        border: 1px solid #e9ecef;
-    }
-
-    .sg-wallet-balance {
-        color: #495057;
-        font-size: 0.875rem;
-        margin: 0;
-    }
-
-    .sg-wallet-amount {
-        color: #007bff;
-        font-weight: 600;
-        font-size: 1.125rem;
-    }
-
-    .sg-btn-submit {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        border: none;
-        color: white;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 12px 24px;
-        width: 100%;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        cursor: pointer;
-    }
-
-    .sg-btn-submit:hover {
-        background: linear-gradient(135deg, #20c997, #17a2b8);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-    }
-
-    .sg-btn-cancel {
-        background: #6c757d;
-        border: none;
-        color: white;
-        font-weight: 500;
-        border-radius: 10px;
-        padding: 12px 24px;
-        width: 100%;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        cursor: pointer;
-        margin-top: 0.5rem;
-    }
-
-    .sg-btn-cancel:hover {
-        background: #545b62;
-        transform: translateY(-1px);
-    }
-
-    .sg-error-message {
-        background: #f8d7da;
-        color: #721c24;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        border: 1px solid #f5c6cb;
-        font-size: 0.875rem;
-    }
-
-    .sg-success-message {
-        background: #d4edda;
-        color: #155724;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        border: 1px solid #c3e6cb;
-        font-size: 0.875rem;
-    }
-
-    /* --- Estilos para las opciones de categoría --- */
-    .category-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
-    .category-option {
-        background: #f8f9fa;
-        border: 2px solid #e9ecef;
-        border-radius: 8px;
-        padding: 0.75rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #495057;
-        user-select: none;
-    }
-
-    .category-option:hover {
-        background: #e9ecef;
-        border-color: #dee2e6;
-        transform: translateY(-1px);
-    }
-
-    .category-option.selected {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        border-color: #007bff;
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
-    }
-
-    .category-option.selected:hover {
-        background: linear-gradient(135deg, #0056b3, #004085);
-        border-color: #0056b3;
-    }
-
-    /* Iconos para las categorías */
-    .category-option::before {
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        margin-right: 0.5rem;
         font-size: 1rem;
+        border-radius: 12px;
+        border: 2px solid rgba(0, 67, 112, 0.1);
+        background: #fafafa;
+        transition: all 0.3s ease;
     }
 
-    .category-option[data-value="VACACIONES"]::before {
-        content: "\f5a0";
-        /* fa-plane-departure */
+    .af-form-control:focus {
+        border-color: var(--primary-color);
+        background: white;
+        outline: none;
     }
 
-    .category-option[data-value="AUTO"]::before {
-        content: "\f1b9";
-        /* fa-car */
+    .af-btn-submit {
+        background: var(--success-color);
+        border: none;
+        padding: 0.75rem 2rem;
+        color: white;
+        border-radius: 12px;
+        font-weight: 600;
+        margin-top: 1.5rem;
+        cursor: pointer;
     }
 
-    .category-option[data-value="EMERGENCIA"]::before {
-        content: "\f0f3";
-        /* fa-bell */
+    .af-btn-submit:hover {
+        background: #059669;
     }
 
-    .category-option[data-value="CASA"]::before {
-        content: "\f015";
-        /* fa-home */
+    .af-btn-cancel {
+        margin-left: 1rem;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
     }
 
-    .category-option[data-value="EDUCACION"]::before {
-        content: "\f19d";
-        /* fa-graduation-cap */
+    .af-btn-cancel:hover {
+        background: #495057;
     }
 
-    .category-option[data-value="SALUD"]::before {
-        content: "\f0f0";
-        /* fa-plus-square */
+    .af-wallet {
+        background: #f3f4f6;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        font-weight: 500;
+        color: var(--text-color);
     }
 
-    .category-option[data-value="OTRO"]::before {
-        content: "\f1b2";
-        /* fa-cube */
+    .af-message {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 0.9rem;
     }
 
-    @media (max-width: 768px) {
-        .sg-container {
-            padding: 1rem;
-        }
+    .af-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #b91c1c;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
 
-        .sg-summary-amount {
-            font-size: 1.5rem;
-        }
-
-        .sg-form-grid {
-            grid-template-columns: 1fr;
-            gap: 0;
-        }
-
-        .sg-modal {
-            width: 95%;
-            padding: 1.5rem;
-        }
-
-        .category-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .sg-progress-bar.success {
-            background-color: #28a745;
-        }
-
-        .sg-progress-bar.info {
-            background-color: #17a2b8;
-        }
-
-        .sg-progress-bar.warning {
-            background-color: #ffc107;
-        }
-
-        .sg-progress-bar.danger {
-            background-color: #dc3545;
-        }
+    .af-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #047857;
+        border: 1px solid rgba(16, 185, 129, 0.2);
     }
 </style>
 
-<div class="sg-container">
-    <h1 class="sg-page-title">Agregar Fondos a "{{ goal.name }}"</h1>
-
-    <div class="sg-wallet-info mb-4">
-        <p class="sg-wallet-balance">Saldo disponible en billetera:</p>
-        <p class="sg-wallet-amount">${{ wallet_balance|floatformat:2 }}</p>
+<div class="af-container">
+    <!-- Header -->
+    <div class="af-header">
+        <h2>Agregar Fondos a "{{ goal.name }}"</h2>
+        <p>Acércate más a tu objetivo con cada aporte.</p>
     </div>
 
-    <form method="post" action="" class="sg-create-section">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+    <!-- Wallet info -->
+    <div class="af-wallet">
+        Saldo disponible en billetera: <strong>${{ wallet_balance|floatformat:2 }}</strong>
+    </div>
 
-        <div class="sg-form-group">
-            <label class="sg-form-label" for="id_amount">Cantidad a agregar</label>
-            {{ form.amount }}
-            {{ form.amount.errors }}
-        </div>
+    <!-- Formulario -->
+    <div class="af-form-section">
+        <form method="post">
+            {% csrf_token %}
 
-        <div class="sg-form-group">
-            <label class="sg-form-label" for="id_description">Descripción</label>
-            {{ form.description }}
-            {{ form.description.errors }}
-        </div>
+            {% if form.non_field_errors %}
+                <div class="af-message af-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
-        <div class="text-end">
-            <button type="submit" class="sg-btn-submit">Agregar</button>
-            <a href="{% url 'savings_goals:list' %}" class="sg-btn-cancel ms-2">Cancelar</a>
-        </div>
-    </form>
+            <div class="mb-3">
+                <label class="af-form-label" for="id_amount">Cantidad a agregar</label>
+                {{ form.amount|add_class:"af-form-control" }}
+                {% if form.amount.errors %}
+                    <div class="af-message af-error">{{ form.amount.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label class="af-form-label" for="id_description">Descripción (opcional)</label>
+                {{ form.description|add_class:"af-form-control" }}
+                {% if form.description.errors %}
+                    <div class="af-message af-error">{{ form.description.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="af-btn-submit">Agregar</button>
+            <a href="{% url 'savings_goals:list' %}" class="af-btn-cancel">Cancelar</a>
+        </form>
+    </div>
 </div>
 {% endblock %}

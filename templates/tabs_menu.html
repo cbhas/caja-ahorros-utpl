@@ -18,24 +18,9 @@
             <i class="fas fa-exchange-alt me-2"></i>Transacciones
         </a>
         <li class="nav-item">
-            <a class="nav-link {% if 'ahorros' in request.resolver_match.url_name %}active{% endif %}" href="">
-                <i class="fas fa-piggy-bank me-2"></i>Ahorros
-            </a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'admin_credits' %}active{% endif %}"
                 href="{% url 'admin_credits' %}">
                 <i class="fas fa-credit-card me-2"></i> Créditos
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {% if 'reportes' in request.resolver_match.url_name %}active{% endif %}" href="">
-                <i class="fas fa-chart-bar me-2"></i>Reportes
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {% if 'config' in request.resolver_match.url_name %}active{% endif %}" href="">
-                <i class="fas fa-cogs me-2"></i>Configuración
             </a>
         </li>
     </ul>
